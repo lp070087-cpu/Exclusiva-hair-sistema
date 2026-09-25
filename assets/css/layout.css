@@ -1,0 +1,795 @@
+/* ==========================================================================
+   EXCLUSIVA HAIR — SISTEMA DE GESTÃO · layout.css
+   Casca do painel + componentes compostos (tabela adaptativa, gaveta, modal,
+   toast, dropdown, abas, filtros, paginação).
+
+   Regra de ouro da responsividade: NADA de rolagem horizontal. Onde uma
+   tabela não cabe, ela deixa de ser tabela e vira cartão — não vira tabela
+   apertada com rolagem lateral.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. CASCA
+   -------------------------------------------------------------------------- */
+.app {
+  display: grid;
+  grid-template-columns: var(--trilho-largura) minmax(0, 1fr);
+  min-height: 100dvh;
+  min-height: 100vh;
+  background: var(--marfim);
+}
+.app[data-recolhido="sim"] { grid-template-columns: var(--trilho-recolhido) minmax(0, 1fr); }
+
+.coluna { display: flex; flex-direction: column; min-width: 0; min-height: 100dvh; min-height: 100vh; }
+
+/* A área útil ocupa TODO o espaço restante ao lado do trilho. Sem largura
+   máxima e sem centralização: o respiro lateral é o único recuo, e ele encolhe
+   junto com a tela (desktop ~40px, notebook ~24px, celular ~16px). */
+.conteudo {
+  flex: 1;
+  width: 100%;
+  padding: var(--e6) var(--respiro-lateral) var(--e9);
+  min-width: 0;
+}
+/* Exceção deliberada: telas de texto corrido/formulário podem se estreitar,
+   mas isso é decisão DA TELA, nunca da casca. */
+.conteudo--estreito { max-width: 60rem; margin-inline: auto; }
+
+.tela { display: none; }
+.tela[data-ativa="sim"] { display: block; animation: tela-entra var(--d3) var(--saida) both; }
+@keyframes tela-entra { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+/* A transição entre telas existe para a troca de rota não piscar. É CURTA
+   de propósito: isto é um sistema, não uma página de apresentação. */
+@keyframes escalonar { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+.tela[data-ativa="sim"] > * > .bloco,
+.tela[data-ativa="sim"] > * > .grade,
+.tela[data-ativa="sim"] > * > .cartao,
+.tela[data-ativa="sim"] > * > .colunas,
+.tela[data-ativa="sim"] > * > .barra-filtros {
+  /* A duracao vem do token como em todo o resto: um literal solto no meio
+     de 78 usos de token e exatamente o que fica para tras quando alguem
+     ajusta a velocidade do painel inteiro. */
+  animation: escalonar var(--d3) var(--suave) both;
+  animation-delay: calc(var(--ordem, 0) * 45ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tela[data-ativa="sim"] > * > .bloco,
+  .tela[data-ativa="sim"] > * > .grade,
+  .tela[data-ativa="sim"] > * > .cartao,
+  .tela[data-ativa="sim"] > * > .colunas,
+  .tela[data-ativa="sim"] > * > .barra-filtros { animation: none; }
+}
+
+/* Cabeçalho de tela: título, contexto e ações */
+.cabecalho {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: var(--e4); flex-wrap: wrap;
+  margin-bottom: var(--e5);
+}
+.cabecalho__texto { min-width: 0; }
+.cabecalho__contexto {
+  display: flex; align-items: center; gap: var(--e2); flex-wrap: wrap;
+  margin-top: var(--e2); font-size: var(--t-13); color: var(--texto-2);
+}
+.cabecalho__acoes { display: flex; align-items: center; gap: var(--e2); flex-wrap: wrap; }
+
+.migalha { display: flex; align-items: center; gap: var(--e2); font-size: var(--t-12); color: var(--texto-3); }
+.migalha a:hover { color: var(--acento-texto); }
+
+/* --------------------------------------------------------------------------
+   2. TRILHO LATERAL  (mobile: gaveta)
+   -------------------------------------------------------------------------- */
+.trilho {
+  position: sticky; top: 0;
+  height: 100dvh;
+  height: 100vh;
+  display: flex; flex-direction: column;
+  background: var(--vinho-3);
+  color: var(--texto);
+  z-index: var(--z-trilho);
+  overflow: hidden;
+}
+
+.trilho__marca {
+  display: flex; align-items: center; gap: var(--e3);
+  padding: var(--e5) var(--e4);
+  min-height: var(--topo-altura);
+  border-bottom: 1px solid var(--linha);
+}
+.trilho__logo { width: 2.25rem; height: 2.25rem; flex: none; object-fit: contain; }
+.trilho__nome {
+  font-family: var(--fonte-titulo);
+  font-size: var(--t-16); line-height: 1.15; color: #FBF5F6;
+  white-space: nowrap; overflow: hidden;
+}
+.trilho__papel {
+  font-size: var(--t-11); letter-spacing: var(--rotulo-esp); text-transform: uppercase;
+  color: var(--acento-texto);
+}
+
+.trilho__lista { flex: 1; overflow-y: auto; padding: var(--e3) var(--e3) var(--e5); overscroll-behavior: contain; }
+.trilho__grupo + .trilho__grupo { margin-top: var(--e5); }
+.trilho__grupo-titulo {
+  padding: 0 var(--e3) var(--e2);
+  font-size: var(--t-11); letter-spacing: var(--rotulo-esp); text-transform: uppercase;
+  color: var(--texto-3);
+}
+
+.item-trilho {
+  position: relative;
+  display: flex; align-items: center; gap: var(--e3);
+  padding: 0 var(--e3); height: 2.375rem;
+  border-radius: var(--r-2);
+  color: var(--texto-2);
+  font-size: var(--t-14);
+  transition: background var(--d2) var(--suave), color var(--d2) var(--suave);
+}
+.item-trilho:hover { background: rgba(255, 255, 255, 0.06); color: #FBF5F6; }
+.item-trilho svg { width: 1.125rem; height: 1.125rem; flex: none; }
+.item-trilho__texto { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.item-trilho__contador {
+  margin-left: auto; flex: none;
+  background: var(--rosa); color: #fff;
+  font-size: var(--t-11); font-weight: 500; font-variant-numeric: tabular-nums;
+  min-width: 1.125rem; height: 1.125rem; padding: 0 0.3125rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: var(--r-pill);
+}
+
+/* Ativo: barra rosa à esquerda + fundo tingido. É como a cliente sabe onde está. */
+.item-trilho[aria-current="page"] {
+  background: rgba(222, 180, 189, 0.14);
+  color: #FFFFFF;
+}
+.item-trilho[aria-current="page"]::before {
+  content: ""; position: absolute; left: 0; top: 0.4375rem; bottom: 0.4375rem;
+  width: 2px; border-radius: 0 var(--r-pill) var(--r-pill) 0;
+  background: var(--rosa-claro);
+}
+.item-trilho[aria-current="page"] svg { color: var(--rosa-claro); }
+
+.trilho__rodape { padding: var(--e3); border-top: 1px solid var(--linha); }
+
+/* Estado recolhido: só ícones, com dica por tooltip nativo. */
+.app[data-recolhido="sim"] .trilho__nome,
+.app[data-recolhido="sim"] .trilho__papel,
+.app[data-recolhido="sim"] .trilho__grupo-titulo,
+.app[data-recolhido="sim"] .item-trilho__texto,
+.app[data-recolhido="sim"] .item-trilho__contador,
+.app[data-recolhido="sim"] .trilho__rotulado { display: none; }
+.app[data-recolhido="sim"] .item-trilho { justify-content: center; padding: 0; }
+.app[data-recolhido="sim"] .trilho__marca { justify-content: center; padding: var(--e4) 0; }
+.app[data-recolhido="sim"] .trilho__grupo + .trilho__grupo { margin-top: var(--e3); }
+
+/* Botão de recolher — só no desktop, onde o trilho é fixo. */
+.trilho__alternar { display: none; }
+
+/* --------------------------------------------------------------------------
+   3. TOPO
+   -------------------------------------------------------------------------- */
+.topo {
+  position: sticky; top: 0; z-index: var(--z-topo);
+  display: flex; align-items: center; gap: var(--e3);
+  min-height: var(--topo-altura);
+  padding: var(--e2) var(--respiro-lateral);
+  background: rgba(250, 247, 244, 0.88);
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  border-bottom: 1px solid var(--linha);
+}
+.topo__menu { display: none; }
+/* A busca acompanha a largura do conteúdo em vez de se perder num canto:
+   cresce e é limitada só para não virar uma faixa gigante em ultrawide. */
+.topo__busca { flex: 1 1 auto; max-width: 34rem; }
+.topo__espaco { flex: 0 1 auto; }
+.topo__acoes { display: flex; align-items: center; gap: var(--e1); margin-left: auto; }
+
+.topo__usuario {
+  display: flex; align-items: center; gap: var(--e2);
+  padding: var(--e1) var(--e2) var(--e1) var(--e1);
+  border-radius: var(--r-pill);
+  transition: background var(--d2) var(--suave);
+}
+.topo__usuario:hover { background: rgba(63, 30, 40, 0.06); }
+.topo__usuario-nome { font-size: var(--t-13); color: var(--texto); white-space: nowrap; }
+
+/* --------------------------------------------------------------------------
+   4. GAVETA LATERAL (genérica) E VÉU
+   -------------------------------------------------------------------------- */
+.veu {
+  position: fixed; inset: 0; z-index: var(--z-veu);
+  background: var(--veu);
+  opacity: 0; visibility: hidden;
+  transition: opacity var(--d2) var(--suave), visibility var(--d2) var(--suave);
+}
+.veu[data-aberto="sim"] { opacity: 1; visibility: visible; }
+
+.gaveta {
+  position: fixed; top: 0; right: 0; z-index: var(--z-gaveta);
+  width: min(30rem, 100%);
+  height: 100dvh;
+  height: 100vh;
+  display: flex; flex-direction: column;
+  background: var(--superficie);
+  border-left: 1px solid var(--linha);
+  box-shadow: var(--sombra-4);
+  transform: translateX(101%);
+  transition: transform var(--d3) var(--saida);
+  visibility: hidden;
+}
+.gaveta[data-aberto="sim"] { transform: none; visibility: visible; }
+
+.gaveta__topo {
+  display: flex; align-items: flex-start; gap: var(--e3);
+  padding: var(--e4) var(--e5);
+  border-bottom: 1px solid var(--linha);
+  padding-top: max(var(--e4), env(safe-area-inset-top));
+}
+.gaveta__titulo { font-family: var(--fonte-titulo); font-size: var(--t-21); line-height: 1.2; }
+.gaveta__fechar { margin-left: auto; }
+.gaveta__corpo { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: var(--e5); }
+.gaveta__rodape {
+  display: flex; gap: var(--e2); flex-wrap: wrap;
+  padding: var(--e4) var(--e5);
+  border-top: 1px solid var(--linha);
+  background: var(--superficie-alt);
+  padding-bottom: max(var(--e4), env(safe-area-inset-bottom));
+}
+.gaveta__rodape .btn { flex: 1 1 auto; }
+
+/* Gaveta de filtros: menor, para não engolir a tela no celular */
+.gaveta--filtros { width: min(24rem, 100%); }
+
+/* --------------------------------------------------------------------------
+   5. MODAL
+   -------------------------------------------------------------------------- */
+.modal {
+  position: fixed; z-index: var(--z-modal);
+  top: 50%; left: 50%;
+  width: min(34rem, calc(100% - 2 * var(--e4)));
+  max-height: min(85dvh, 44rem);
+  display: flex; flex-direction: column;
+  background: var(--superficie);
+  border-radius: var(--r-4);
+  box-shadow: var(--sombra-4);
+  transform: translate(-50%, -46%) scale(0.98);
+  opacity: 0; visibility: hidden;
+  transition: opacity var(--d2) var(--saida), transform var(--d3) var(--saida), visibility var(--d3);
+}
+.modal[data-aberto="sim"] { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
+.modal--largo { width: min(52rem, calc(100% - 2 * var(--e4))); }
+.modal__topo {
+  display: flex; align-items: flex-start; gap: var(--e3);
+  padding: var(--e5) var(--e5) var(--e4);
+  border-bottom: 1px solid var(--linha);
+}
+.modal__titulo { font-family: var(--fonte-titulo); font-size: var(--t-21); line-height: 1.2; }
+.modal__texto { margin-top: var(--e2); font-size: var(--t-14); color: var(--texto-2); line-height: var(--alt-texto); }
+.modal__fechar { margin-left: auto; }
+.modal__corpo { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: var(--e5); }
+.modal__rodape {
+  display: flex; justify-content: flex-end; gap: var(--e2); flex-wrap: wrap;
+  padding: var(--e4) var(--e5);
+  border-top: 1px solid var(--linha);
+  background: var(--superficie-alt);
+  border-radius: 0 0 var(--r-4) var(--r-4);
+}
+.modal__rodape .btn--perigo, .modal__rodape .btn--empurrar { margin-right: auto; }
+
+/* --------------------------------------------------------------------------
+   6. TOASTS
+   -------------------------------------------------------------------------- */
+.toasts {
+  position: fixed; z-index: var(--z-toast);
+  left: 50%; transform: translateX(-50%);
+  bottom: calc(var(--e4) + env(safe-area-inset-bottom));
+  display: flex; flex-direction: column-reverse; gap: var(--e2);
+  width: min(26rem, calc(100% - 2 * var(--e4)));
+  pointer-events: none;
+}
+.toast {
+  display: flex; align-items: flex-start; gap: var(--e3);
+  padding: var(--e3) var(--e4);
+  background: var(--vinho-3);
+  color: #F7EFF1;
+  border-radius: var(--r-3);
+  box-shadow: var(--sombra-3);
+  font-size: var(--t-14);
+  pointer-events: auto;
+  animation: toast-entra var(--d3) var(--saida) both;
+}
+.toast[data-saindo="sim"] { animation: toast-sai var(--d2) var(--suave) both; }
+@keyframes toast-entra { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes toast-sai   { to { opacity: 0; transform: translateY(6px) scale(0.98); } }
+
+.toast__icone { flex: none; width: 1.125rem; height: 1.125rem; margin-top: 0.1rem; color: var(--rosa-claro); }
+.toast--sucesso .toast__icone { color: #9FC08C; }
+.toast--alerta  .toast__icone { color: #E6B884; }
+.toast--erro    .toast__icone { color: #E39A8A; }
+.toast__texto { flex: 1; line-height: var(--alt-texto); }
+.toast__texto b { font-weight: 500; color: #fff; }
+.toast__acao {
+  flex: none; font-size: var(--t-13); font-weight: 500; color: var(--rosa-claro);
+  border-bottom: 1px solid transparent;
+}
+.toast__acao:hover { border-bottom-color: currentColor; }
+.toast__fechar { flex: none; color: rgba(255, 255, 255, 0.62); margin: -0.25rem -0.35rem 0 0; }
+.toast__fechar:hover { color: #fff; }
+
+/* --------------------------------------------------------------------------
+   7. DROPDOWN (menu de contexto, notificações, usuário)
+   -------------------------------------------------------------------------- */
+.menu-flutuante {
+  position: absolute; z-index: var(--z-gaveta);
+  min-width: 13rem; max-width: min(24rem, calc(100vw - 1.5rem));
+  background: var(--superficie);
+  border: 1px solid var(--linha-2);
+  border-radius: var(--r-3);
+  box-shadow: var(--sombra-3);
+  padding: var(--e2);
+  opacity: 0; visibility: hidden; transform: translateY(-4px);
+  transition: opacity var(--d2) var(--saida), transform var(--d2) var(--saida), visibility var(--d2);
+}
+.menu-flutuante[data-aberto="sim"] { opacity: 1; visibility: visible; transform: none; }
+.menu-flutuante__item {
+  display: flex; align-items: center; gap: var(--e3);
+  width: 100%; padding: var(--e2) var(--e3);
+  border-radius: var(--r-2);
+  font-size: var(--t-14); color: var(--texto); text-align: left;
+}
+.menu-flutuante__item:hover { background: var(--marfim-2); }
+.menu-flutuante__item svg { width: 1rem; height: 1rem; color: var(--texto-2); }
+.menu-flutuante__item--perigo { color: var(--ausente-texto); }
+.menu-flutuante__item--perigo svg { color: currentColor; }
+.menu-flutuante__sep { height: 1px; margin: var(--e2) var(--e1); background: var(--linha); }
+.menu-flutuante__titulo {
+  padding: var(--e2) var(--e3) var(--e1);
+  font-size: var(--t-11); letter-spacing: var(--rotulo-esp); text-transform: uppercase;
+  color: var(--texto-3);
+}
+
+/* --------------------------------------------------------------------------
+   8. ABAS
+   -------------------------------------------------------------------------- */
+.abas {
+  display: flex; gap: var(--e1); flex-wrap: wrap;
+  border-bottom: 1px solid var(--linha);
+  margin-bottom: var(--e5);
+}
+.aba {
+  position: relative;
+  padding: var(--e3) var(--e3) calc(var(--e3) + 2px);
+  font-size: var(--t-14); color: var(--texto-2); white-space: nowrap;
+  transition: color var(--d2) var(--suave);
+}
+.aba:hover { color: var(--texto); }
+.aba[aria-selected="true"] { color: var(--tinta); font-weight: 500; }
+.aba[aria-selected="true"]::after {
+  content: ""; position: absolute; left: var(--e2); right: var(--e2); bottom: -1px;
+  height: 2px; border-radius: var(--r-pill) var(--r-pill) 0 0; background: var(--rosa);
+}
+.aba__contador {
+  display: inline-block; margin-left: 0.375rem;
+  font-size: var(--t-11); color: var(--texto-3); font-variant-numeric: tabular-nums;
+}
+
+/* Segmentado — para alternâncias curtas (Dia/Semana/Mês) */
+.segmentado {
+  display: inline-flex; padding: 0.1875rem; gap: 0.1875rem;
+  background: var(--marfim-2); border: 1px solid var(--linha);
+  border-radius: var(--r-2);
+}
+.segmentado__opcao {
+  padding: 0 var(--e3); height: 1.875rem;
+  display: inline-flex; align-items: center; gap: var(--e2);
+  border-radius: var(--r-1);
+  font-size: var(--t-13); color: var(--texto-2); white-space: nowrap;
+  transition: background var(--d2) var(--suave), color var(--d2) var(--suave), box-shadow var(--d2) var(--suave);
+}
+.segmentado__opcao:hover { color: var(--texto); }
+.segmentado__opcao[aria-pressed="true"], .segmentado__opcao[aria-selected="true"] {
+  background: var(--branco); color: var(--tinta); font-weight: 500; box-shadow: var(--sombra-1);
+}
+
+/* --------------------------------------------------------------------------
+   9. BARRA DE FILTROS
+   -------------------------------------------------------------------------- */
+.filtros {
+  display: flex; align-items: center; gap: var(--e2); flex-wrap: wrap;
+  margin-bottom: var(--e4);
+}
+.filtros__busca { flex: 1 1 15rem; max-width: 24rem; min-width: 0; }
+.filtros__chips { display: flex; align-items: center; gap: var(--e2); flex-wrap: wrap; }
+
+/* --- Barra de filtros em DUAS RÉGUAS -------------------------------------
+   A barra antiga era um flex solto: cada controle caía numa linha diferente
+   conforme a largura, e cada um tinha a SUA altura (chip 30px, campo 38px).
+   Daí a sensação de "fora de ritmo". Agora são duas réguas de verdade, e
+   dentro de cada uma tudo tem a mesma altura e alinha pela base. */
+.barra-filtros {
+  display: flex; flex-direction: column; gap: var(--e3);
+  margin-bottom: var(--e4);
+}
+.barra-filtros__linha {
+  display: flex; align-items: center; gap: var(--e2);
+  flex-wrap: wrap; row-gap: var(--e3);
+}
+/* Absorve a sobra da régua: empurra o último controle para a direita. Se a
+   régua encher, ele encolhe para zero e nada é empurrado para fora. */
+.barra-filtros__espaco { flex: 1 1 0; min-width: 0; }
+.barra-filtros__linha .btn svg { width: 1rem; height: 1rem; }
+
+/* Campos "De/Até": o rótulo fica AO LADO do campo, não em cima — em cima o
+   controle descia e saía da régua dos chips. */
+.campo--curto { flex-direction: row; align-items: center; gap: var(--e2); }
+.campo--curto .campo__rotulo { flex: none; color: var(--texto-3); }
+.campo--curto .entrada { width: auto; flex: none; min-width: 10.5rem; }
+
+@media (max-width: 60rem) {
+  .filtros__busca { flex-basis: 100%; max-width: none; }
+  .campo--curto { flex: 1 1 10rem; }
+  .campo--curto .entrada { width: 100%; flex: 1 1 auto; min-width: 0; }
+}
+
+.chip {
+  display: inline-flex; align-items: center; gap: 0.375rem;
+  /* Mesma altura do botão e do campo (--controle-alt). É o que faz a linha
+     inteira da barra de filtros sentar na mesma régua. */
+  height: var(--controle-alt); padding: 0 var(--e4);
+  border: 1px solid var(--linha-2); border-radius: var(--r-pill);
+  background: var(--branco);
+  font-size: var(--t-13); color: var(--texto-2);
+  transition: border-color var(--d2) var(--suave), background var(--d2) var(--suave), color var(--d2) var(--suave);
+}
+.chip svg { width: 0.875rem; height: 0.875rem; flex: none; }
+.chip:hover { border-color: var(--linha-forte); background: var(--superficie-alt); color: var(--texto); }
+.chip[aria-pressed="true"] {
+  background: var(--rosa-lavado); border-color: rgba(177, 117, 129, 0.44);
+  color: var(--acento-texto);
+}
+.chip__x { display: inline-flex; opacity: 0.6; }
+.chip__x:hover { opacity: 1; }
+.chip__n { font-variant-numeric: tabular-nums; opacity: 0.75; }
+
+/* --------------------------------------------------------------------------
+   10. TABELA ADAPTATIVA
+   Abaixo de 40rem cada linha vira um cartão, com o rótulo da coluna ao lado
+   do valor. `data-rotulo` é a fonte do rótulo no modo cartão.
+   -------------------------------------------------------------------------- */
+.tabela { width: 100%; font-size: var(--t-14); }
+.tabela thead th {
+  position: sticky; top: 0; z-index: 1;
+  padding: var(--e3) var(--e4);
+  background: var(--marfim-2);
+  border-bottom: 1px solid var(--linha-2);
+  font-size: var(--t-11); font-weight: 500; letter-spacing: var(--rotulo-esp);
+  text-transform: uppercase; color: var(--texto-3);
+  text-align: left; white-space: nowrap;
+}
+.tabela tbody td {
+  padding: var(--e3) var(--e4);
+  border-bottom: 1px solid var(--linha);
+  color: var(--texto); vertical-align: middle;
+}
+.tabela tbody tr { transition: background var(--d1) var(--suave); }
+.tabela tbody tr:hover { background: var(--rosa-lavado); }
+.tabela tbody tr:last-child td { border-bottom: 0; }
+.tabela__sel { width: 2.5rem; }
+.tabela__num { text-align: right; font-variant-numeric: tabular-nums; }
+.tabela__acoes { text-align: right; white-space: nowrap; }
+.tabela th[data-ordenar] { cursor: pointer; user-select: none; }
+.tabela th[data-ordenar]:hover { color: var(--texto-2); }
+.tabela th[aria-sort]::after {
+  content: ""; display: inline-block; margin-left: 0.3rem;
+  border: 4px solid transparent; vertical-align: middle;
+}
+.tabela th[aria-sort="ascending"]::after  { border-bottom-color: var(--acento); margin-bottom: 4px; }
+.tabela th[aria-sort="descending"]::after { border-top-color: var(--acento); margin-top: 4px; }
+
+/* Linha clicável: a linha inteira abre o detalhe. */
+.tabela--clicavel tbody tr { cursor: pointer; }
+.linha-principal { display: flex; align-items: center; gap: var(--e3); min-width: 0; }
+.linha-principal__texto { min-width: 0; }
+.linha-principal__nome { font-weight: 500; color: var(--texto); }
+.linha-principal__sub { font-size: var(--t-12); color: var(--texto-3); }
+.truncar { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+@media (max-width: 40rem) {
+  .tabela thead { display: none; }
+  .tabela, .tabela tbody, .tabela tr, .tabela td { display: block; width: 100%; }
+  .tabela tr {
+    border: 1px solid var(--linha); border-radius: var(--r-3);
+    padding: var(--e3); margin-bottom: var(--e3);
+    background: var(--superficie); box-shadow: var(--sombra-1);
+  }
+  .tabela tbody tr:hover { background: var(--superficie); }
+  .tabela td {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: var(--e3);
+    padding: var(--e1) 0; border-bottom: 0; text-align: left;
+  }
+  .tabela td::before {
+    content: attr(data-rotulo);
+    flex: none;
+    font-size: var(--t-11); letter-spacing: var(--rotulo-esp); text-transform: uppercase;
+    color: var(--texto-3); padding-top: 0.15rem;
+  }
+  .tabela td[data-rotulo=""]::before, .tabela td:not([data-rotulo])::before { content: none; }
+  .tabela__num { text-align: right; }
+  .tabela__sel, .tabela td.tabela__acoes { justify-content: flex-end; }
+  /* Célula que deve ocupar a linha toda (nome do cliente, por exemplo) */
+  .tabela td[data-bloco] { display: block; padding-bottom: var(--e2); }
+  .tabela td[data-bloco]::before { content: none; }
+}
+
+/* --------------------------------------------------------------------------
+   11. LISTA DE CARTÕES (alternativa explícita à tabela onde ela nunca cabe)
+   -------------------------------------------------------------------------- */
+.pilha { display: flex; flex-direction: column; gap: var(--e3); }
+.pilha--justa { gap: 0; }
+.pilha--justa > * + * { border-top: 1px solid var(--linha); }
+
+.linha-cartao {
+  display: flex; align-items: center; gap: var(--e4);
+  /* Altura confortável de linha de dados: a hora e o nome ficam legíveis e
+     o alvo de clique chega perto dos 72px sem inflar o cartão. */
+  min-height: 4.5rem;
+  padding: var(--e3) var(--e5);
+  background: var(--superficie);
+  border: 1px solid var(--linha);
+  border-radius: var(--r-3);
+  transition: border-color var(--d2) var(--suave), box-shadow var(--d2) var(--suave),
+              transform var(--d2) var(--suave), background var(--d2) var(--suave);
+}
+.linha-cartao--clicavel { cursor: pointer; }
+/* Microinteração discreta: sobe 2px, muda a borda para o vinho da casa e
+   abre a sombra um degrau. Sem brilho, sem 3D. */
+.linha-cartao--clicavel:hover {
+  border-color: rgba(126, 53, 70, 0.38);
+  box-shadow: var(--sombra-2);
+  transform: translateY(-2px);
+}
+.linha-cartao--clicavel:active { transform: translateY(0); box-shadow: var(--sombra-1); }
+.linha-cartao__corpo { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.15rem; }
+.linha-cartao__fim { display: flex; align-items: center; gap: var(--e2); flex: none; }
+/* A hora é a âncora visual da linha: sempre com a mesma largura, para as
+   horas ficarem alinhadas em coluna mesmo com nomes de tamanhos diferentes. */
+.linha-cartao__hora {
+  flex: none; width: 6rem;
+  font-size: var(--t-14); font-weight: 500; color: var(--texto);
+  font-variant-numeric: tabular-nums;
+}
+.linha-cartao__hora b { color: var(--texto); font-weight: 500; }
+
+@media (max-width: 30rem) {
+  .linha-cartao { flex-wrap: wrap; gap: var(--e3); }
+  .linha-cartao__hora { width: auto; }
+  .linha-cartao__fim { width: 100%; justify-content: flex-start; padding-left: calc(2.125rem + var(--e3)); }
+}
+
+/* --------------------------------------------------------------------------
+   12. GRADE DE CARTÕES
+   -------------------------------------------------------------------------- */
+.grade { display: grid; gap: var(--e4); }
+.grade--2 { grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+.grade--3 { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+.grade--4 { grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); }
+.grade--metricas { grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); }
+/* Grades de painel: 2 colunas em tela larga, 1 coluna em tela estreita.
+   É o que transforma uma lista vertical interminável em painel de leitura. */
+.grade--painel { grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr)); }
+/* Quando o painel ocupa a largura toda, o miolo de texto fica legível sem
+   esticar a linha até ficar difícil de acompanhar. */
+.grade--painel > .bloco { min-width: 0; }
+
+.metrica {
+  padding: var(--e4) var(--e5) var(--e5);
+  background: var(--superficie);
+  border: 1px solid var(--linha);
+  border-radius: var(--r-3);
+  box-shadow: var(--sombra-1);
+  min-width: 0;
+}
+.metrica__topo {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--e2); margin-bottom: var(--e3); min-height: 2.125rem;
+}
+.metrica__icone {
+  width: 1.75rem; height: 1.75rem; border-radius: var(--r-2);
+  display: grid; place-content: center;
+  background: var(--rosa-lavado); color: var(--acento-texto);
+}
+.metrica__icone svg { width: 1rem; height: 1rem; }
+.metrica__valor { display: flex; align-items: baseline; gap: var(--e2); flex-wrap: wrap; }
+.metrica__nota { margin-top: var(--e2); font-size: var(--t-12); line-height: 1.4; color: var(--texto-3); }
+.metrica__delta { display: inline-flex; align-items: center; gap: 0.2rem; font-size: var(--t-12); font-weight: 500; }
+.metrica__delta svg { width: 0.8125rem; height: 0.8125rem; }
+.metrica__delta--sobe { color: var(--confirmado-texto); }
+.metrica__delta--desce { color: var(--ausente-texto); }
+.metrica__delta--neutro { color: var(--texto-3); }
+.metrica--destaque { border-color: rgba(177, 117, 129, 0.36); background: linear-gradient(180deg, var(--rosa-lavado), var(--superficie) 62%); }
+
+/* --------------------------------------------------------------------------
+   13. DESCRIÇÃO (par rótulo/valor)
+   -------------------------------------------------------------------------- */
+.descricao { display: grid; gap: var(--e3) var(--e5); grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); }
+.descricao__item { min-width: 0; }
+.descricao__valor { margin-top: var(--e1); font-size: var(--t-14); color: var(--texto); overflow-wrap: anywhere; }
+.descricao--justa { gap: var(--e3) 0; grid-template-columns: 1fr; }
+.descricao--justa .descricao__item {
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--e4);
+  padding-bottom: var(--e3); border-bottom: 1px solid var(--linha);
+}
+.descricao--justa .descricao__valor { margin-top: 0; text-align: right; }
+
+/* --------------------------------------------------------------------------
+   14. PAGINAÇÃO
+   -------------------------------------------------------------------------- */
+.paginacao {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--e3);
+  flex-wrap: wrap;
+  padding: var(--e3) var(--e5);
+  border-top: 1px solid var(--linha);
+  font-size: var(--t-13); color: var(--texto-2);
+}
+.paginacao__paginas { display: flex; align-items: center; gap: var(--e1); }
+.paginacao__botao {
+  min-width: 2rem; height: 2rem; padding: 0 var(--e2);
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid transparent; border-radius: var(--r-2);
+  font-size: var(--t-13); color: var(--texto-2); font-variant-numeric: tabular-nums;
+}
+.paginacao__botao:hover:not(:disabled) { background: var(--marfim-2); color: var(--texto); }
+.paginacao__botao[aria-current="page"] { background: var(--vinho-2); color: #FBF7F6; font-weight: 500; }
+.paginacao__botao:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* --------------------------------------------------------------------------
+   15. DETALHE EM BLOCOS (usado nas gavetas e fichas)
+   -------------------------------------------------------------------------- */
+.bloco + .bloco { margin-top: var(--e6); }
+.bloco__titulo {
+  display: flex; align-items: center; gap: var(--e2);
+  margin-bottom: var(--e3);
+  font-size: var(--t-12); font-weight: 500; letter-spacing: var(--rotulo-esp);
+  text-transform: uppercase; color: var(--texto-3);
+}
+.bloco__titulo::after { content: ""; flex: 1; height: 1px; background: var(--linha); }
+
+.linha-dado {
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--e4);
+  padding: var(--e2) 0;
+}
+.linha-dado + .linha-dado { border-top: 1px solid var(--linha); }
+.linha-dado__valor { text-align: right; overflow-wrap: anywhere; }
+
+/* Linha do tempo — histórico do agendamento e do cliente */
+.linha-tempo { position: relative; padding-left: var(--e5); }
+.linha-tempo::before {
+  content: ""; position: absolute; left: 0.3125rem; top: 0.4rem; bottom: 0.4rem;
+  width: 1px; background: var(--linha-2);
+}
+.linha-tempo__item { position: relative; padding-bottom: var(--e4); }
+.linha-tempo__item:last-child { padding-bottom: 0; }
+.linha-tempo__item::before {
+  content: ""; position: absolute; left: calc(-1 * var(--e5) + 0.1875rem); top: 0.42rem;
+  width: 0.375rem; height: 0.375rem; border-radius: 50%;
+  background: var(--rosa); box-shadow: 0 0 0 2px var(--superficie);
+}
+.linha-tempo__quando { font-size: var(--t-12); color: var(--texto-3); }
+.linha-tempo__texto { font-size: var(--t-14); color: var(--texto); }
+
+/* --------------------------------------------------------------------------
+   16. NAVEGAÇÃO INFERIOR (mobile)
+   -------------------------------------------------------------------------- */
+.barra-inferior { display: none; }
+
+/* --------------------------------------------------------------------------
+   17. ADAPTATIVO
+   -------------------------------------------------------------------------- */
+
+/* Desktop largo: o botão de recolher aparece */
+@media (min-width: 64.0625rem) {
+  .trilho__alternar { display: inline-flex; }
+}
+
+/* Entre 60rem e 64rem: o trilho fica estreito automaticamente (sem estado) */
+@media (min-width: 60rem) and (max-width: 64rem) {
+  .app { grid-template-columns: var(--trilho-recolhido) minmax(0, 1fr); }
+  .app .trilho__nome,
+  .app .trilho__papel,
+  .app .trilho__grupo-titulo,
+  .app .item-trilho__texto,
+  .app .item-trilho__contador,
+  .app .trilho__rotulado { display: none; }
+  .app .item-trilho { justify-content: center; padding: 0; }
+  .app .trilho__marca { justify-content: center; padding: var(--e4) 0; }
+  .app .trilho__grupo + .trilho__grupo { margin-top: var(--e3); }
+}
+
+/* --------------------------------------------------------------------------
+   Abaixo de 60rem: o trilho vira GAVETA e entra a navegação inferior.
+   A gaveta é a mesma marcação — muda só o posicionamento. É o que mantém um
+   só HTML para desktop e celular.
+   -------------------------------------------------------------------------- */
+@media (max-width: 60rem) {
+  .app, .app[data-recolhido="sim"] { grid-template-columns: minmax(0, 1fr); }
+
+  .trilho {
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: min(17.5rem, 84vw);
+    height: 100dvh;
+    transform: translateX(-101%);
+    transition: transform var(--d3) var(--saida);
+    box-shadow: var(--sombra-4);
+    visibility: hidden;
+  }
+  .trilho[data-aberto="sim"] { transform: none; visibility: visible; }
+  .trilho__marca { padding-top: max(var(--e5), env(safe-area-inset-top)); }
+  .trilho__rodape { padding-bottom: max(var(--e3), env(safe-area-inset-bottom)); }
+
+  .topo { padding: var(--e2) var(--e4); }
+  .topo__menu { display: inline-flex; }
+  .topo__busca { display: none; }
+  .topo__usuario-nome { display: none; }
+
+  .conteudo { padding: var(--e4) var(--e4) calc(var(--barra-inferior) + var(--e8)); }
+
+  /* Barra inferior: as 5 telas do dia a dia, ao alcance do polegar. */
+  .barra-inferior {
+    display: flex; align-items: stretch;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-topo);
+    height: calc(var(--barra-inferior) + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: rgba(250, 247, 244, 0.94);
+    backdrop-filter: blur(12px) saturate(1.4);
+    -webkit-backdrop-filter: blur(12px) saturate(1.4);
+    border-top: 1px solid var(--linha);
+  }
+  .barra-inferior__item {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem;
+    color: var(--texto-3); font-size: var(--t-11);
+  }
+  .barra-inferior__item svg { width: 1.25rem; height: 1.25rem; }
+  .barra-inferior__item[aria-current="page"] { color: var(--acento-texto); }
+  .barra-inferior__item span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+
+  /* A gaveta e o modal ocupam a tela toda no celular */
+  .gaveta { width: 100%; max-width: 100%; }
+  .modal, .modal--largo {
+    top: auto; bottom: 0; left: 0; right: 0;
+    width: 100%; max-height: 92dvh;
+    border-radius: var(--r-4) var(--r-4) 0 0;
+    transform: translateY(100%);
+  }
+  .modal[data-aberto="sim"] { transform: none; }
+  .modal__rodape { border-radius: 0; }
+  .modal__corpo, .modal__rodape { padding-bottom: max(var(--e4), env(safe-area-inset-bottom)); }
+}
+
+@media (max-width: 26rem) {
+  .conteudo { padding-left: var(--e3); padding-right: var(--e3); }
+  .cabecalho__acoes { width: 100%; }
+  .cabecalho__acoes .btn { flex: 1 1 auto; }
+  .filtros__busca { flex-basis: 100%; max-width: none; }
+  /* Em telas de 320–430px os chips de período ocupam a régua inteira; a
+     rolagem horizontal evita que o último fique cortado. */
+  .barra-filtros__linha--rolavel {
+    flex-wrap: nowrap; overflow-x: auto;
+    padding-bottom: 0.25rem;
+    scrollbar-width: none; -ms-overflow-style: none;
+  }
+  .barra-filtros__linha--rolavel::-webkit-scrollbar { display: none; }
+}
+
+/* --------------------------------------------------------------------------
+   18. IMPRESSÃO — a comanda e o relatório precisam sair limpos no papel
+   -------------------------------------------------------------------------- */
+@media print {
+  .trilho, .topo, .barra-inferior, .toasts, .veu, .gaveta__rodape, .paginacao { display: none !important; }
+  .app, .app[data-recolhido="sim"] { grid-template-columns: 1fr; }
+  .conteudo { max-width: none; padding: 0; }
+  .cartao, .linha-cartao { box-shadow: none; border-color: #BBB; }
+  .tela { display: none !important; }
+  .tela[data-ativa="sim"] { display: block !important; }
+  body { background: #fff; }
+}

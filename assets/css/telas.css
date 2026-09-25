@@ -1,0 +1,1523 @@
+/* ==========================================================================
+   EXCLUSIVA HAIR — SISTEMA DE GESTÃO · telas.css
+   Estilos específicos de cada tela: entrada, agenda (dia/semana/mês),
+   clientes, serviços, financeiro, relatórios e configurações.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. TELA DE ENTRADA
+   Duas colunas no desktop: a marca em vinho à esquerda, o formulário à
+   direita. No celular só o formulário, com a marca reduzida ao símbolo.
+   -------------------------------------------------------------------------- */
+.entrada-tela {
+  min-height: 100dvh;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--marfim);
+}
+.entrada-tela[hidden] { display: none; }
+
+.entrada-marca {
+  position: relative;
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding: var(--e9) var(--e8);
+  background: var(--vinho-3);
+  color: #F6EEF0;
+  overflow: hidden;
+}
+/* O arco da marca, em traço fino, como fundo — vem da própria logo. */
+.entrada-marca::after {
+  content: "";
+  position: absolute; right: -22%; bottom: -32%;
+  width: 78%; aspect-ratio: 1;
+  border: 1px solid rgba(222, 180, 189, 0.22);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.entrada-marca::before {
+  content: "";
+  position: absolute; right: -8%; bottom: -14%;
+  width: 44%; aspect-ratio: 1;
+  border: 1px solid rgba(222, 180, 189, 0.14);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.entrada-marca__topo { display: flex; align-items: center; gap: var(--e4); position: relative; z-index: 1; }
+.entrada-marca__logo { width: 3.5rem; height: 3.5rem; object-fit: contain; }
+.entrada-marca__nome {
+  font-family: var(--fonte-titulo);
+  font-size: var(--t-26); line-height: 1.1; color: #FFF;
+}
+.entrada-marca__papel {
+  font-size: var(--t-11); letter-spacing: var(--rotulo-esp);
+  text-transform: uppercase; color: var(--rosa-claro);
+}
+.entrada-marca__texto { position: relative; z-index: 1; max-width: 30ch; }
+.entrada-marca__titulo {
+  font-family: var(--fonte-titulo);
+  font-size: var(--t-32); line-height: 1.18; color: #FFF;
+}
+.entrada-marca__lista { margin-top: var(--e6); display: flex; flex-direction: column; gap: var(--e3); }
+.entrada-marca__item {
+  display: flex; align-items: center; gap: var(--e3);
+  font-size: var(--t-14); color: var(--texto-2);
+}
+.entrada-marca__item svg { width: 1rem; height: 1rem; color: var(--rosa-claro); flex: none; }
+.entrada-marca__rodape { position: relative; z-index: 1; }
+
+.entrada-form {
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  padding: var(--e8) var(--e6);
+}
+.entrada-form__caixa { width: 100%; max-width: 23rem; }
+.entrada-form__titulo { font-family: var(--fonte-titulo); font-size: var(--t-26); }
+.entrada-form__sub { margin-top: var(--e2); font-size: var(--t-14); color: var(--texto-2); }
+.entrada-form__campos { margin-top: var(--e7); display: flex; flex-direction: column; gap: var(--e4); }
+.entrada-form__linha { display: flex; align-items: center; justify-content: space-between; gap: var(--e3); flex-wrap: wrap; }
+.entrada-form__demo {
+  margin-top: var(--e5); padding: var(--e3) var(--e4);
+  border: 1px dashed var(--linha-2); border-radius: var(--r-2);
+  font-size: var(--t-12); color: var(--texto-3); line-height: var(--alt-texto);
+}
+.entrada-form__demo b { color: var(--texto-2); font-weight: 500; }
+
+/* Crédito da Unitrix — discreto, no pé, nos dois painéis. */
+.credito {
+  display: flex; align-items: center; gap: var(--e2); flex-wrap: wrap;
+  font-size: var(--t-11); color: var(--texto-3); line-height: 1.6;
+}
+.credito strong { font-weight: 500; color: var(--texto-2); }
+.credito__selo {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.125rem; height: 1.125rem; border-radius: var(--r-1);
+  background: var(--marfim-2); color: var(--texto-3); flex: none;
+}
+.credito__selo svg { width: 0.6875rem; height: 0.6875rem; }
+.entrada-marca .credito { color: #A98790; }
+.entrada-marca .credito strong { color: #DCC0C7; }
+.entrada-marca .credito__selo { background: rgba(255, 255, 255, 0.10); color: var(--rosa-claro); }
+.entrada-form__rodape { margin-top: var(--e6); display: flex; justify-content: center; }
+
+@media (max-width: 56rem) {
+  .entrada-tela { grid-template-columns: 1fr; }
+  .entrada-marca {
+    padding: var(--e6) var(--e5) var(--e7);
+    justify-content: flex-start; gap: var(--e5);
+  }
+  .entrada-marca__texto { max-width: none; }
+  .entrada-marca__titulo { font-size: var(--t-21); }
+  .entrada-marca__lista, .entrada-marca__rodape { display: none; }
+  .entrada-marca::after, .entrada-marca::before { display: none; }
+  .entrada-form { padding: var(--e7) var(--e5); flex: 1; justify-content: flex-start; }
+  .entrada-form__caixa { max-width: 26rem; }
+}
+
+/* --------------------------------------------------------------------------
+   2. AGENDA — FAIXA DE DATAS (seletor horizontal, sem colunas apertadas)
+   -------------------------------------------------------------------------- */
+.faixa-datas {
+  display: flex; gap: var(--e2);
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: var(--e1);
+  margin: 0 calc(-1 * var(--e4));
+  padding-left: var(--e4); padding-right: var(--e4);
+}
+.faixa-datas::-webkit-scrollbar { display: none; }
+.faixa-datas__item {
+  flex: none; scroll-snap-align: center;
+  width: 3.75rem; padding: var(--e2) 0;
+  display: flex; flex-direction: column; align-items: center; gap: 0.15rem;
+  border: 1px solid var(--linha); border-radius: var(--r-3);
+  background: var(--superficie);
+  transition: border-color var(--d2) var(--suave), background var(--d2) var(--suave);
+}
+.faixa-datas__item:hover { border-color: var(--linha-forte); }
+.faixa-datas__item[aria-current="date"] {
+  background: var(--vinho-2); border-color: var(--vinho-2); color: #FBF7F6;
+}
+.faixa-datas__item[aria-current="date"] .faixa-datas__dia,
+.faixa-datas__item[aria-current="date"] .faixa-datas__num { color: #FBF7F6; }
+.faixa-datas__dia {
+  font-size: var(--t-11); letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--texto-3);
+}
+.faixa-datas__num {
+  font-family: var(--fonte-titulo); font-size: var(--t-18); line-height: 1; color: var(--texto);
+}
+.faixa-datas__ponto {
+  width: 4px; height: 4px; border-radius: 50%; background: var(--rosa);
+}
+.faixa-datas__item[aria-current="date"] .faixa-datas__ponto { background: var(--rosa-claro); }
+.faixa-datas__item[data-fechado] { opacity: 0.42; }
+.faixa-datas__item[data-fechado] .faixa-datas__num { color: var(--texto-3); }
+
+/* Barra da agenda: navegação + visão */
+.agenda-barra {
+  display: flex; align-items: center; gap: var(--e2); flex-wrap: wrap;
+  margin-bottom: var(--e4);
+}
+.agenda-barra__nav { display: flex; align-items: center; gap: var(--e1); }
+.agenda-barra__titulo {
+  font-family: var(--fonte-titulo); font-size: var(--t-18); min-width: 11rem;
+}
+.agenda-barra__espaco { flex: 1; }
+
+/* Resumo do dia em tira */
+.agenda-resumo {
+  display: flex; gap: var(--e5); flex-wrap: wrap;
+  padding: var(--e3) var(--e5);
+  border-bottom: 1px solid var(--linha);
+  font-size: var(--t-13); color: var(--texto-2);
+}
+.agenda-resumo__item { display: flex; align-items: baseline; gap: var(--e2); }
+.agenda-resumo__item b { color: var(--texto); font-weight: 500; font-variant-numeric: tabular-nums; }
+
+/* --------------------------------------------------------------------------
+   3. AGENDA — VISÃO DIA (linha do tempo)
+   A altura de cada bloco é PROPORCIONAL À DURAÇÃO, calculada em JS via
+   --minuto-altura. Um alisamento de 3h ocupa o triplo de um óleo de 30min —
+   é isso que faz a agenda ser lida de relance, e não uma lista disfarçada.
+   -------------------------------------------------------------------------- */
+/* ESCALA DA AGENDA — a variável que define tudo.
+   Ela é POR MINUTO porque a altura do bloco é duração × este valor.
+   O valor anterior (1.125rem = 18px por minuto) dava 1.080px por hora:
+   uma jornada de 9h virava uma tira de ~9.700px e um único atendimento de
+   1h tomava a tela inteira. O alvo é ~72px por hora (1,2px por minuto). */
+.agenda-dia {
+  --altura-hora: 4.5rem;                        /* 72px por hora            */
+  --minuto-altura: calc(var(--altura-hora) / 60);
+  --goteira: 3.5rem;
+  position: relative;
+  border: 1px solid var(--linha);
+  border-radius: var(--r-3);
+  background: var(--superficie);
+  overflow: hidden;
+}
+.agenda-dia__corpo { position: relative; padding: var(--e4) 0; }
+
+/* Altura total = minutos de expediente × altura por minuto */
+.agenda-dia__grade {
+  position: relative;
+  margin-left: var(--goteira);
+  height: calc(var(--minutos-dia) * var(--minuto-altura));
+}
+
+/* Linha de cada hora, com o rótulo no goteira esquerdo */
+.agenda-hora {
+  position: absolute; left: 0; right: 0;
+  height: calc(60 * var(--minuto-altura));
+  border-top: 1px solid var(--linha);
+}
+.agenda-hora:last-child { border-bottom: 1px solid var(--linha); }
+.agenda-hora__rotulo {
+  position: absolute; left: calc(-1 * var(--goteira)); top: -0.5rem;
+  width: calc(var(--goteira) - var(--e3));
+  padding-right: var(--e3);
+  text-align: right;
+  font-size: var(--t-11); color: var(--texto-3);
+  font-variant-numeric: tabular-nums;
+}
+/* Meia hora: linha mais fraca, só um traço curto à esquerda */
+.agenda-hora--meia {
+  position: absolute; left: calc(-1 * var(--goteira) + var(--goteira) * 0.45);
+  right: 0; height: 1px; background: var(--linha); opacity: 0.55;
+}
+
+/* Bloco de compromisso */
+.agenda-bloco {
+  position: absolute; left: var(--e2); right: var(--e2);
+  display: flex; flex-direction: column; gap: 0.1rem;
+  padding: var(--e2) var(--e3);
+  border-radius: var(--r-2);
+  border-left: 3px solid var(--acento);
+  background: var(--rosa-lavado);
+  color: var(--tinta);
+  overflow: hidden;
+  text-align: left; width: auto;
+  transition: box-shadow var(--d2) var(--suave), transform var(--d1) var(--suave);
+}
+.agenda-bloco:hover { box-shadow: var(--sombra-2); }
+.agenda-bloco:active { transform: translateY(1px); }
+.agenda-bloco__hora {
+  font-size: var(--t-11); font-weight: 500; color: var(--texto-2);
+  font-variant-numeric: tabular-nums;
+}
+.agenda-bloco__nome {
+  font-size: var(--t-13); font-weight: 500; color: var(--tinta);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.agenda-bloco__servico {
+  font-size: var(--t-12); color: var(--texto-2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.agenda-bloco__rodape { display: flex; align-items: center; gap: var(--e2); flex-wrap: wrap; margin-top: auto; }
+
+/* Bloco curto (30min): o conteúdo precisa caber em uma linha */
+.agenda-bloco[data-curto="sim"] { flex-direction: row; align-items: center; gap: var(--e3); padding: 0 var(--e3); }
+.agenda-bloco[data-curto="sim"] .agenda-bloco__hora { flex: none; }
+.agenda-bloco[data-curto="sim"] .agenda-bloco__nome { flex: none; }
+.agenda-bloco[data-curto="sim"] .agenda-bloco__servico { flex: 1; min-width: 0; }
+
+/* Cores por estado — o fundo do bloco diz o estado sem precisar do selo */
+.agenda-bloco[data-status="novo"]        { background: var(--novo-fundo);        border-left-color: #B9748A; }
+.agenda-bloco[data-status="pendente"]    { background: var(--pendente-fundo);    border-left-color: #C79A4E; }
+.agenda-bloco[data-status="confirmado"]  { background: var(--confirmado-fundo);  border-left-color: #6E9A5C; }
+.agenda-bloco[data-status="atendimento"] { background: var(--atendimento-fundo); border-left-color: var(--vinho); }
+.agenda-bloco[data-status="concluido"]   { background: var(--concluido-fundo);   border-left-color: #8C8878; }
+.agenda-bloco[data-status="cancelado"]   { background: var(--cancelado-fundo);   border-left-color: var(--texto-3); opacity: 0.68; }
+.agenda-bloco[data-status="cancelado"] .agenda-bloco__nome { text-decoration: line-through; color: var(--texto-3); }
+.agenda-bloco[data-status="ausente"]     { background: var(--ausente-fundo);     border-left-color: var(--ausente-texto); }
+
+/* Horário livre: alvo clicável que cria agendamento naquele horário */
+.agenda-vago {
+  position: absolute; left: var(--e2); right: var(--e2);
+  display: flex; align-items: center; gap: var(--e2);
+  padding: 0 var(--e3);
+  border: 1px dashed transparent; border-radius: var(--r-2);
+  color: transparent;
+  font-size: var(--t-12);
+  transition: border-color var(--d2) var(--suave), background var(--d2) var(--suave), color var(--d2) var(--suave);
+}
+.agenda-vago:hover, .agenda-vago:focus-visible {
+  border-color: rgba(177, 117, 129, 0.5);
+  background: var(--rosa-lavado);
+  color: var(--acento-texto);
+}
+.agenda-vago svg { width: 0.8125rem; height: 0.8125rem; }
+.agenda-vago__texto { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Bloqueio: hachura diagonal. A leitura é "aqui não se agenda", não "vago". */
+.agenda-bloqueio {
+  position: absolute; left: var(--e2); right: var(--e2);
+  display: flex; align-items: flex-start; gap: var(--e2);
+  padding: var(--e2) var(--e3);
+  border-radius: var(--r-2);
+  border: 1px solid var(--linha-2);
+  border-left: 3px solid var(--texto-3);
+  background-color: var(--marfim-2);
+  background-image: repeating-linear-gradient(
+    -45deg, transparent, transparent 5px,
+    rgba(63, 30, 40, 0.055) 5px, rgba(63, 30, 40, 0.055) 10px
+  );
+  color: var(--texto-2);
+  overflow: hidden;
+  font-size: var(--t-12);
+  text-align: left; width: auto;
+}
+.agenda-bloqueio svg { width: 0.8125rem; height: 0.8125rem; flex: none; margin-top: 0.1rem; }
+.agenda-bloqueio__texto { min-width: 0; }
+.agenda-bloqueio__motivo { font-weight: 500; color: var(--texto); }
+.agenda-bloqueio__obs { font-size: var(--t-11); color: var(--texto-3); }
+.agenda-bloqueio[data-motivo="almoco"]      { border-left-color: #8C8878; }
+.agenda-bloqueio[data-motivo="evento"]      { border-left-color: var(--rosa); background-color: var(--rosa-lavado); }
+.agenda-bloqueio[data-motivo="manutencao"]  { border-left-color: var(--dourado); }
+.agenda-bloqueio[data-motivo="compromisso"] { border-left-color: var(--vinho); }
+.agenda-bloqueio[data-motivo="indisponivel"]{ border-left-color: var(--texto-3); }
+
+/* Faixa contínua indisponível: um bloqueio colado a um atendimento, por
+   exemplo. Os filhos se posicionam dentro da faixa, nunca na grade — é isso
+   que mantém cada bloco dentro do seu próprio intervalo de tempo. */
+.agenda-grupo { position: absolute; left: 0; right: 0; }
+.agenda-grupo > * { position: absolute; }
+.agenda-grupo[data-lado="sim"] > .agenda-vago { right: auto; width: auto; min-width: 5.5rem; }
+
+/* Um atendimento maior que a janela em que está — cortado, com uma sombra
+   no pé que diz "continua". Nunca transborda por cima do bloco seguinte. */
+.agenda-bloco[data-ajustado="sim"] {
+  border-bottom-left-radius: 0; border-bottom-right-radius: 0;
+  box-shadow: inset 0 -14px 14px -14px rgba(63, 30, 40, 0.45);
+}
+.agenda-bloco[data-ajustado="sim"]::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+  background: repeating-linear-gradient(-45deg,
+    currentColor, currentColor 3px, transparent 3px, transparent 6px);
+  opacity: 0.35;
+}
+
+/* Marca da hora atual: uma linha que atravessa a grade */
+.agenda-agora {
+  position: absolute; left: calc(-1 * var(--goteira) + 0.5rem); right: 0;
+  height: 2px; background: var(--rosa); z-index: 2; pointer-events: none;
+}
+.agenda-agora::before {
+  content: ""; position: absolute; left: -0.25rem; top: -0.25rem;
+  width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--rosa);
+}
+.agenda-agora__rotulo {
+  position: absolute; right: var(--e2); top: -1.35rem;
+  font-size: var(--t-11); font-weight: 500; color: var(--rosa);
+  background: var(--superficie); padding: 0 var(--e2); border-radius: var(--r-1);
+}
+
+/* Dia fechado: mensagem no lugar da grade */
+.agenda-fechado {
+  padding: var(--e8) var(--e5);
+  text-align: center; color: var(--texto-2);
+}
+
+/* --------------------------------------------------------------------------
+   4. AGENDA — VISÃO SEMANA
+   Só no desktop: 6 colunas (seg–sáb). No celular a semana cai na lista
+   vertical por dia — a classe .agenda-semana simplesmente não aparece.
+   -------------------------------------------------------------------------- */
+.agenda-semana {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  border: 1px solid var(--linha); border-radius: var(--r-3);
+  background: var(--superficie); overflow: hidden;
+}
+.agenda-semana--5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.agenda-semana__col + .agenda-semana__col { border-left: 1px solid var(--linha); }
+.agenda-semana__topo {
+  padding: var(--e3); text-align: center;
+  border-bottom: 1px solid var(--linha-2);
+  background: var(--marfim-2);
+}
+.agenda-semana__dia { font-size: var(--t-11); letter-spacing: var(--rotulo-esp); text-transform: uppercase; color: var(--texto-3); }
+.agenda-semana__num { font-family: var(--fonte-titulo); font-size: var(--t-18); color: var(--texto); line-height: 1.2; }
+.agenda-semana__col[data-hoje="sim"] .agenda-semana__topo { background: var(--rosa-lavado); }
+.agenda-semana__col[data-hoje="sim"] .agenda-semana__num { color: var(--acento-texto); }
+.agenda-semana__col[data-fechado="sim"] .agenda-semana__topo { opacity: 0.55; }
+.agenda-semana__lista { padding: var(--e2); display: flex; flex-direction: column; gap: var(--e2); min-height: 14rem; }
+.agenda-semana__vazio {
+  padding: var(--e5) var(--e2); text-align: center;
+  font-size: var(--t-12); color: var(--texto-3);
+}
+
+.mini-ag {
+  display: flex; flex-direction: column; gap: 0.05rem;
+  padding: 0.3125rem 0.4375rem;
+  border-radius: var(--r-1);
+  border-left: 2px solid var(--acento);
+  background: var(--rosa-lavado);
+  text-align: left; width: 100%;
+  transition: box-shadow var(--d2) var(--suave);
+}
+.mini-ag:hover { box-shadow: var(--sombra-2); }
+.mini-ag__hora { font-size: var(--t-11); color: var(--texto-2); font-variant-numeric: tabular-nums; }
+.mini-ag__nome { font-size: var(--t-12); font-weight: 500; color: var(--tinta); }
+.mini-ag__servico { font-size: var(--t-11); color: var(--texto-3); }
+.mini-ag[data-status="novo"]        { background: var(--novo-fundo);        border-left-color: #B9748A; }
+.mini-ag[data-status="pendente"]    { background: var(--pendente-fundo);    border-left-color: #C79A4E; }
+.mini-ag[data-status="confirmado"]  { background: var(--confirmado-fundo);  border-left-color: #6E9A5C; }
+.mini-ag[data-status="atendimento"] { background: var(--atendimento-fundo); border-left-color: var(--vinho); }
+.mini-ag[data-status="concluido"]   { background: var(--concluido-fundo);   border-left-color: #8C8878; }
+.mini-ag[data-status="cancelado"]   { background: var(--cancelado-fundo);   border-left-color: var(--texto-3); opacity: 0.68; }
+.mini-ag[data-status="ausente"]     { background: var(--ausente-fundo);     border-left-color: var(--ausente-texto); }
+.mini-bloqueio {
+  padding: 0.3125rem 0.4375rem; border-radius: var(--r-1);
+  border: 1px dashed var(--linha-2); background: var(--marfim-2);
+  font-size: var(--t-11); color: var(--texto-3); text-align: left; width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   5. AGENDA — VISÃO MÊS
+   -------------------------------------------------------------------------- */
+.agenda-mes {
+  border: 1px solid var(--linha); border-radius: var(--r-3);
+  background: var(--superficie); overflow: hidden;
+}
+.agenda-mes__cabecalho { display: grid; grid-template-columns: repeat(7, 1fr); background: var(--marfim-2); border-bottom: 1px solid var(--linha-2); }
+.agenda-mes__cabecalho span {
+  padding: var(--e2); text-align: center;
+  font-size: var(--t-11); letter-spacing: var(--rotulo-esp);
+  text-transform: uppercase; color: var(--texto-3);
+}
+.agenda-mes__grade { display: grid; grid-template-columns: repeat(7, 1fr); }
+.agenda-mes__dia {
+  min-height: 6rem; padding: var(--e2);
+  border-right: 1px solid var(--linha); border-bottom: 1px solid var(--linha);
+  display: flex; flex-direction: column; gap: var(--e1);
+  text-align: left; width: 100%;
+  transition: background var(--d2) var(--suave);
+}
+.agenda-mes__dia:nth-child(7n) { border-right: 0; }
+.agenda-mes__dia:hover { background: var(--rosa-lavado); }
+.agenda-mes__dia[data-fora] { opacity: 0.4; }
+.agenda-mes__dia[data-fechado] { background: var(--marfim-2); cursor: default; }
+.agenda-mes__num {
+  font-size: var(--t-13); font-variant-numeric: tabular-nums; color: var(--texto);
+  width: 1.5rem; height: 1.5rem; display: grid; place-content: center; border-radius: 50%;
+}
+.agenda-mes__dia[data-hoje="sim"] .agenda-mes__num { background: var(--vinho-2); color: #FBF7F6; font-weight: 500; }
+.agenda-mes__contagem { font-size: var(--t-11); color: var(--texto-2); }
+.agenda-mes__barras { display: flex; flex-direction: column; gap: 2px; margin-top: auto; }
+.agenda-mes__barra { height: 3px; border-radius: var(--r-pill); background: var(--linha-2); }
+.agenda-mes__barra[data-status="novo"]        { background: #B9748A; }
+.agenda-mes__barra[data-status="pendente"]    { background: #C79A4E; }
+.agenda-mes__barra[data-status="confirmado"]  { background: #6E9A5C; }
+.agenda-mes__barra[data-status="atendimento"] { background: var(--vinho); }
+.agenda-mes__barra[data-status="concluido"]   { background: #8C8878; }
+.agenda-mes__barra[data-status="ausente"]     { background: var(--ausente-texto); }
+.agenda-mes__bloqueio {
+  font-size: var(--t-11); color: var(--texto-3);
+  display: flex; align-items: center; gap: 0.2rem;
+}
+.agenda-mes__bloqueio svg { width: 0.625rem; height: 0.625rem; }
+.agenda-mes__ocupacao {
+  height: 3px; border-radius: var(--r-pill); background: var(--marfim-2);
+  overflow: hidden; margin-top: var(--e1);
+}
+.agenda-mes__ocupacao i { display: block; height: 100%; background: var(--rosa); }
+
+/* --------------------------------------------------------------------------
+   6. LISTA VERTICAL DE AGENDA (usa a visão semana/mês no celular e a visão
+   dia em qualquer tamanho quando o detalhe não cabe na grade)
+   -------------------------------------------------------------------------- */
+.agenda-lista__dia + .agenda-lista__dia { margin-top: var(--e5); }
+.agenda-lista__cabecalho {
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--e3);
+  padding-bottom: var(--e2); margin-bottom: var(--e3);
+  border-bottom: 1px solid var(--linha);
+}
+.agenda-lista__titulo { font-size: var(--t-14); font-weight: 500; color: var(--texto); }
+.agenda-lista__meta { font-size: var(--t-12); color: var(--texto-3); }
+
+/* --------------------------------------------------------------------------
+   7. FICHA DE CLIENTE
+   -------------------------------------------------------------------------- */
+.perfil-topo {
+  display: flex; align-items: flex-start; gap: var(--e4); flex-wrap: wrap;
+  padding-bottom: var(--e5); margin-bottom: var(--e5);
+  border-bottom: 1px solid var(--linha);
+}
+.perfil-topo__texto { flex: 1; min-width: 12rem; }
+.perfil-topo__nome { font-family: var(--fonte-titulo); font-size: var(--t-21); line-height: 1.2; }
+.perfil-topo__meta { display: flex; align-items: center; gap: var(--e3); flex-wrap: wrap; margin-top: var(--e2); font-size: var(--t-13); color: var(--texto-2); }
+.perfil-topo__meta span { display: inline-flex; align-items: center; gap: 0.3rem; }
+.perfil-topo__meta svg { width: 0.875rem; height: 0.875rem; color: var(--texto-3); }
+.perfil-topo__acoes { display: flex; gap: var(--e2); flex-wrap: wrap; }
+
+.etiquetas { display: flex; gap: var(--e2); flex-wrap: wrap; }
+.etiqueta {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.1875rem 0.5rem;
+  border-radius: var(--r-pill);
+  background: var(--marfim-2); color: var(--texto-2);
+  font-size: var(--t-11);
+}
+.etiqueta svg { width: 0.75rem; height: 0.75rem; }
+.etiqueta--alerta { background: var(--ausente-fundo); color: var(--ausente-texto); }
+.etiqueta--nota   { background: var(--pendente-fundo); color: var(--pendente-texto); }
+
+/* Anotações do cliente */
+.nota {
+  padding: var(--e3) var(--e4);
+  background: var(--pendente-fundo);
+  border-left: 2px solid var(--dourado);
+  border-radius: 0 var(--r-2) var(--r-2) 0;
+  font-size: var(--t-13); color: var(--texto);
+  line-height: var(--alt-texto);
+}
+.nota + .nota { margin-top: var(--e2); }
+.nota__quando { display: block; font-size: var(--t-11); color: var(--texto-3); margin-top: var(--e1); }
+
+/* --------------------------------------------------------------------------
+   8. SERVIÇOS
+   -------------------------------------------------------------------------- */
+.servico-cartao {
+  display: flex; flex-direction: column; gap: var(--e3);
+  padding: var(--e4) var(--e5) var(--e5);
+  background: var(--superficie);
+  border: 1px solid var(--linha); border-radius: var(--r-3);
+  box-shadow: var(--sombra-1);
+  transition: border-color var(--d2) var(--suave), box-shadow var(--d2) var(--suave),
+              transform var(--d2) var(--suave);
+}
+.servico-cartao:hover { border-color: rgba(126, 53, 70, 0.38); box-shadow: var(--sombra-2); transform: translateY(-2px); }
+.servico-cartao:active { transform: translateY(0); box-shadow: var(--sombra-1); }
+.servico-cartao[data-offline] { background: var(--marfim-2); }
+.servico-cartao[data-offline] .servico-cartao__nome { color: var(--texto-2); }
+.servico-cartao__topo { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--e3); }
+.servico-cartao__nome { font-size: var(--t-15); font-weight: 500; color: var(--tinta); line-height: 1.35; }
+.servico-cartao__categoria { font-size: var(--t-12); color: var(--texto-3); margin-top: 0.1rem; }
+.servico-cartao__desc { font-size: var(--t-13); color: var(--texto-2); line-height: var(--alt-texto); }
+.servico-cartao__rodape {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--e3);
+  flex-wrap: wrap;
+  padding-top: var(--e3); border-top: 1px solid var(--linha);
+  margin-top: auto;
+}
+.servico-cartao__preco { font-size: var(--t-13); color: var(--texto-2); }
+.servico-cartao__preco b { font-weight: 500; color: var(--texto); }
+.pill-duracao {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.1875rem 0.5rem; border-radius: var(--r-pill);
+  background: var(--marfim-2); color: var(--texto-2); font-size: var(--t-12);
+}
+.pill-duracao svg { width: 0.75rem; height: 0.75rem; }
+
+/* --------------------------------------------------------------------------
+   9. FINANCEIRO
+   -------------------------------------------------------------------------- */
+.fin-periodo {
+  display: flex; align-items: center; gap: var(--e2); flex-wrap: wrap;
+  margin-bottom: var(--e4);
+}
+.fin-datas { display: flex; align-items: flex-end; gap: var(--e3); flex-wrap: wrap; }
+.fin-datas .campo { min-width: 9rem; }
+
+.barra-forma {
+  display: grid; grid-template-columns: 8.5rem 1fr 5.5rem; gap: var(--e3); align-items: center;
+  padding: var(--e2) 0;
+  font-size: var(--t-13);
+}
+.barra-forma + .barra-forma { border-top: 1px solid var(--linha); }
+.barra-forma__nome { color: var(--texto-2); }
+.barra-forma__trilho { height: 0.5rem; border-radius: var(--r-pill); background: var(--marfim-2); overflow: hidden; }
+.barra-forma__trilho i { display: block; height: 100%; border-radius: var(--r-pill); background: var(--rosa); }
+.barra-forma__valor { text-align: right; font-variant-numeric: tabular-nums; color: var(--texto); }
+
+/* --------------------------------------------------------------------------
+   10. RELATÓRIOS
+   -------------------------------------------------------------------------- */
+.grafico {
+  display: flex; align-items: flex-end; gap: var(--e2);
+  height: 11rem; padding-top: var(--e4);
+}
+.grafico__col { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: var(--e2); height: 100%; }
+.grafico__barra {
+  width: 100%; max-width: 2.75rem; margin-top: auto;
+  border-radius: var(--r-1) var(--r-1) 0 0;
+  background: var(--rosa-lavado);
+  border: 1px solid rgba(177, 117, 129, 0.34);
+  border-bottom: 0;
+  min-height: 3px;
+  position: relative;
+  transition: background var(--d2) var(--suave);
+}
+.grafico__col:hover .grafico__barra { background: var(--rosa-medio); }
+
+/* Entrada das barras: elas CRESCEM, uma atrás da outra, quando a seção
+   aparece. O atraso é por coluna (--i) e vem do JS. Só transform: nada de
+   animar `height`, que forçaria layout a cada quadro. */
+@keyframes crescer-barra { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+.grafico__barra { transform-origin: bottom center; }
+.grafico[data-animar] .grafico__barra {
+  animation: crescer-barra 420ms cubic-bezier(0.22, 0.68, 0.32, 1) both;
+  animation-delay: calc(var(--i, 0) * 26ms);
+}
+
+/* Tooltip do gráfico: HTML puro, sem biblioteca. Aparece no hover/foco da
+   coluna e some com o ponteiro — não fica nada pendurado na tela. */
+.grafico__col { position: relative; }
+.grafico__col[data-dica]:hover::after,
+.grafico__col[data-dica]:focus-visible::after {
+  content: attr(data-dica);
+  position: absolute; bottom: calc(100% - 0.5rem); left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  padding: 0.3rem 0.5rem; border-radius: var(--r-1);
+  background: var(--texto); color: var(--marfim);
+  font-size: var(--t-11); white-space: nowrap;
+  pointer-events: none;
+  box-shadow: var(--sombra-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grafico[data-animar] .grafico__barra { animation: none; }
+}
+.grafico__rotulo { font-size: var(--t-11); color: var(--texto-3); white-space: nowrap; }
+.grafico--duplo .grafico__barra { background: linear-gradient(180deg, var(--rosa), var(--rosa-lavado)); }
+
+.legenda { display: flex; gap: var(--e4); flex-wrap: wrap; font-size: var(--t-12); color: var(--texto-2); }
+.legenda__item { display: inline-flex; align-items: center; gap: var(--e2); }
+.legenda__cor { width: 0.625rem; height: 0.625rem; border-radius: 2px; flex: none; }
+
+/* --------------------------------------------------------------------------
+   11. CONFIGURAÇÕES
+   -------------------------------------------------------------------------- */
+.config-secao { padding: var(--e4) 0; }
+.config-secao + .config-secao { border-top: 1px solid var(--linha); }
+.config-linha {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--e4);
+  padding: var(--e3) 0;
+}
+.config-linha + .config-linha { border-top: 1px solid var(--linha); }
+.config-linha__texto { flex: 1; min-width: 0; }
+.config-linha__titulo { font-size: var(--t-14); color: var(--texto); }
+.config-linha__desc { font-size: var(--t-12); color: var(--texto-3); margin-top: 0.1rem; line-height: var(--alt-texto); }
+
+.horario-linha {
+  display: grid; grid-template-columns: 7.5rem 1fr 1fr; gap: var(--e3); align-items: center;
+  padding: var(--e3) 0;
+}
+.horario-linha + .horario-linha { border-top: 1px solid var(--linha); }
+.horario-linha__dia { font-size: var(--t-14); color: var(--texto); }
+.horario-linha__dia small { display: block; font-size: var(--t-11); color: var(--texto-3); }
+.horario-linha__fechado { font-size: var(--t-13); color: var(--texto-3); }
+@media (max-width: 40rem) {
+  .horario-linha { grid-template-columns: 1fr 1fr; }
+  .horario-linha__dia { grid-column: 1 / -1; }
+  .barra-forma { grid-template-columns: 7rem 1fr 4.5rem; gap: var(--e2); }
+}
+
+/* --------------------------------------------------------------------------
+   12. CENTRAL DE NOTIFICAÇÕES (no painel flutuante do sino)
+   -------------------------------------------------------------------------- */
+.notif-painel { width: min(24rem, calc(100vw - 1.5rem)); }
+.notif-painel__topo {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--e2);
+  padding: var(--e2) var(--e3) var(--e3);
+  border-bottom: 1px solid var(--linha);
+  margin-bottom: var(--e2);
+}
+.notif-painel__titulo { font-size: var(--t-14); font-weight: 500; color: var(--texto); }
+.notif-painel__lista { max-height: 22rem; overflow-y: auto; overscroll-behavior: contain; }
+.notif {
+  display: flex; gap: var(--e3); align-items: flex-start;
+  width: 100%; padding: var(--e3); border-radius: var(--r-2);
+  text-align: left;
+  transition: background var(--d2) var(--suave);
+}
+.notif:hover { background: var(--marfim-2); }
+.notif__marca {
+  width: 1.75rem; height: 1.75rem; border-radius: 50%; flex: none;
+  display: grid; place-content: center;
+  background: var(--marfim-2); color: var(--texto-2);
+}
+.notif__marca svg { width: 0.875rem; height: 0.875rem; }
+.notif[data-tipo="novo"] .notif__marca         { background: var(--novo-fundo); color: var(--novo-texto); }
+.notif[data-tipo="cancelamento"] .notif__marca { background: var(--ausente-fundo); color: var(--ausente-texto); }
+.notif[data-tipo="reagendamento"] .notif__marca{ background: var(--pendente-fundo); color: var(--pendente-texto); }
+.notif[data-tipo="confirmacao"] .notif__marca  { background: var(--confirmado-fundo); color: var(--confirmado-texto); }
+.notif__corpo { flex: 1; min-width: 0; }
+.notif__titulo { font-size: var(--t-13); font-weight: 500; color: var(--texto); }
+.notif__texto { font-size: var(--t-12); color: var(--texto-2); line-height: var(--alt-texto); }
+.notif__quando { font-size: var(--t-11); color: var(--texto-3); margin-top: 0.15rem; }
+.notif[data-lida="nao"] .notif__titulo::after {
+  content: ""; display: inline-block; vertical-align: middle;
+  width: 0.375rem; height: 0.375rem; border-radius: 50%;
+  background: var(--rosa); margin-left: var(--e2);
+}
+
+/* --------------------------------------------------------------------------
+   13. PASSOS DO NOVO AGENDAMENTO
+   -------------------------------------------------------------------------- */
+.passos { display: flex; align-items: center; gap: var(--e2); flex-wrap: wrap; margin-bottom: var(--e5); }
+.passo { display: flex; align-items: center; gap: var(--e2); font-size: var(--t-12); color: var(--texto-3); }
+.passo__num {
+  width: 1.375rem; height: 1.375rem; border-radius: 50%; flex: none;
+  display: grid; place-content: center;
+  background: var(--marfim-2); color: var(--texto-3);
+  font-size: var(--t-11); font-weight: 500;
+}
+.passo[data-estado="atual"] { color: var(--tinta); font-weight: 500; }
+.passo[data-estado="atual"] .passo__num { background: var(--vinho-2); color: #FBF7F6; }
+.passo[data-estado="feito"] { color: var(--texto-2); }
+.passo[data-estado="feito"] .passo__num { background: var(--confirmado-fundo); color: var(--confirmado-texto); }
+.passo__traco { width: 1.25rem; height: 1px; background: var(--linha-2); }
+
+/* Grade de horários do passo 3 */
+.grade-horarios { display: grid; grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr)); gap: var(--e2); }
+.opcao-horario {
+  padding: var(--e3) var(--e2);
+  border: 1px solid var(--linha-2); border-radius: var(--r-2);
+  background: var(--branco);
+  font-size: var(--t-14); color: var(--texto);
+  font-variant-numeric: tabular-nums;
+  transition: border-color var(--d2) var(--suave), background var(--d2) var(--suave), color var(--d2) var(--suave);
+}
+.opcao-horario:hover:not(:disabled) { border-color: var(--acento); background: var(--rosa-lavado); }
+.opcao-horario[aria-pressed="true"] { background: var(--vinho-2); border-color: var(--vinho-2); color: #FBF7F6; }
+.opcao-horario:disabled { opacity: 0.38; cursor: not-allowed; text-decoration: line-through; }
+
+/* Escolha em cartões (serviço, cliente) */
+.opcao-cartao {
+  display: flex; align-items: center; gap: var(--e3);
+  width: 100%; padding: var(--e3) var(--e4);
+  border: 1px solid var(--linha-2); border-radius: var(--r-2);
+  background: var(--branco); text-align: left;
+  transition: border-color var(--d2) var(--suave), background var(--d2) var(--suave);
+}
+.opcao-cartao:hover { border-color: var(--linha-forte); background: var(--superficie-alt); }
+.opcao-cartao[aria-pressed="true"] { border-color: var(--acento); background: var(--rosa-lavado); }
+.opcao-cartao__corpo { flex: 1; min-width: 0; }
+.opcao-cartao__nome { font-size: var(--t-14); color: var(--texto); }
+.opcao-cartao__sub { font-size: var(--t-12); color: var(--texto-3); }
+.opcao-cartao__fim { flex: none; font-size: var(--t-13); color: var(--texto-2); font-variant-numeric: tabular-nums; }
+
+/* Resultados do passo 2 */
+.combo-lista { max-height: 16rem; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: var(--e2); margin-top: var(--e3); }
+
+/* --------------------------------------------------------------------------
+   14. COMANDAS E RESUMOS
+   -------------------------------------------------------------------------- */
+.comanda {
+  border: 1px solid var(--linha-2); border-radius: var(--r-3);
+  background: var(--superficie-alt); padding: var(--e4) var(--e5);
+}
+.comanda__linha { display: flex; align-items: baseline; justify-content: space-between; gap: var(--e3); padding: var(--e2) 0; }
+.comanda__linha + .comanda__linha { border-top: 1px solid var(--linha); }
+.comanda__total {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-top: var(--e3); padding-top: var(--e3);
+  border-top: 1px solid var(--linha-2);
+}
+.comanda__total b { font-family: var(--fonte-titulo); font-size: var(--t-21); color: var(--tinta); }
+
+.lista-simples { display: flex; flex-direction: column; }
+.lista-simples__item {
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--e3);
+  padding: var(--e2) 0; font-size: var(--t-13);
+}
+.lista-simples__item + .lista-simples__item { border-top: 1px solid var(--linha); }
+
+/* --------------------------------------------------------------------------
+   15. RESUMO LATERAL (agenda no desktop: faixa de datas + resumo)
+   -------------------------------------------------------------------------- */
+.agenda-lateral { display: flex; flex-direction: column; gap: var(--e3); }
+
+@media (min-width: 60.0625rem) {
+  .so-mobile { display: none !important; }
+}
+@media (max-width: 60rem) {
+  .so-desktop { display: none !important; }
+  .agenda-dia { --altura-hora: 4rem; --goteira: 3rem; }
+  .agenda-agora__rotulo { display: none; }
+}
+
+/* ==========================================================================
+   16. VISÃO GERAL — o painel de chegada
+   Composição: o que está acontecendo agora, o que vem depois, como o dia
+   fecha. Nada de grade de cartões iguais — a hierarquia é o desenho.
+   ========================================================================== */
+
+.colunas { display: grid; gap: var(--e5); align-items: start; }
+@media (min-width: 62.0625rem) {
+  .colunas { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); }
+  .colunas > .bloco { margin: 0; }
+}
+
+/* --- o atendimento em curso: único elemento com movimento na tela ------- */
+.ao-vivo {
+  display: flex; flex-direction: column; gap: var(--e3);
+  padding: var(--e4) var(--e5);
+  margin-bottom: var(--e5);
+  border-radius: var(--r-3);
+  background: linear-gradient(135deg, var(--vinho) 0%, var(--vinho-2) 100%);
+  color: var(--marfim);
+  box-shadow: var(--sombra-3);
+}
+.ao-vivo__marca { display: flex; align-items: center; gap: var(--e2); }
+.ao-vivo__marca .rotulo { color: var(--rosa-claro); }
+.pulso {
+  width: 0.5rem; height: 0.5rem; border-radius: 50%; flex: none;
+  background: var(--rosa-claro);
+  box-shadow: 0 0 0 0 rgba(220, 192, 199, 0.7);
+  animation: ehn-pulso 2.4s var(--suave) infinite;
+}
+@keyframes ehn-pulso {
+  0%   { box-shadow: 0 0 0 0 rgba(220, 192, 199, 0.65); }
+  70%  { box-shadow: 0 0 0 0.6rem rgba(220, 192, 199, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(220, 192, 199, 0); }
+}
+@media (prefers-reduced-motion: reduce) { .pulso { animation: none; } }
+.ao-vivo__item {
+  display: flex; align-items: center; gap: var(--e3); width: 100%;
+  padding: var(--e3); border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--r-2); background: rgba(255, 255, 255, 0.06);
+  color: inherit; text-align: left; font: inherit; cursor: pointer;
+  transition: background var(--d2) var(--suave);
+}
+.ao-vivo__item:hover { background: rgba(255, 255, 255, 0.12); }
+.ao-vivo__corpo { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ao-vivo__corpo .linha-principal__nome { color: var(--marfim); }
+.ao-vivo__corpo .linha-principal__sub { color: rgba(255, 255, 255, 0.72); }
+.ao-vivo__resto { display: flex; flex-direction: column; align-items: flex-end; flex: none; }
+.ao-vivo__resto .num { font-size: var(--t-21); color: var(--marfim); font-variant-numeric: tabular-nums; }
+.ao-vivo__resto .miudo { color: rgba(255, 255, 255, 0.68); }
+
+/* --- próximo atendimento: cartão de destaque, não mais um item da lista - */
+.destaque {
+  display: flex; flex-direction: column; gap: var(--e4); width: 100%;
+  padding: var(--e5); text-align: left; font: inherit; cursor: pointer;
+  border: 1px solid var(--linha-2); border-left: 3px solid var(--acento);
+  border-radius: var(--r-2); background: var(--superficie);
+  box-shadow: var(--sombra-1);
+  transition: box-shadow var(--d2) var(--suave), border-color var(--d2) var(--suave),
+              transform var(--d2) var(--suave);
+}
+.destaque:hover {
+  box-shadow: var(--sombra-2); transform: translateY(-2px);
+  border-top-color: rgba(126, 53, 70, 0.38);
+  border-right-color: rgba(126, 53, 70, 0.38);
+  border-bottom-color: rgba(126, 53, 70, 0.38);
+}
+.destaque:active { transform: translateY(0); box-shadow: var(--sombra-1); }
+.destaque__topo { display: flex; align-items: baseline; gap: var(--e3); }
+.destaque__topo .selo { margin-left: auto; }
+.destaque__hora { font-size: var(--t-32); line-height: 1; color: var(--tinta); font-variant-numeric: tabular-nums; }
+.destaque__ate { font-size: var(--t-13); color: var(--texto-3); }
+.destaque__quem { display: flex; align-items: center; gap: var(--e3); min-width: 0; }
+.destaque__nome { display: block; font-size: var(--t-16); color: var(--tinta); }
+.destaque__rodape {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--e3);
+  padding-top: var(--e3); border-top: 1px solid var(--linha);
+}
+
+/* --- próximos 7 dias: fileira de colunas com altura proporcional -------- */
+.fileira-dias {
+  display: grid; gap: var(--e2);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.dia-resumo {
+  display: flex; flex-direction: column; align-items: center; gap: 0.15rem;
+  padding: var(--e3) var(--e1); cursor: pointer; font: inherit;
+  border: 1px solid var(--linha); border-radius: var(--r-2);
+  background: var(--superficie);
+  min-width: 0;
+  transition: border-color var(--d2) var(--suave), transform var(--d2) var(--suave),
+              box-shadow var(--d2) var(--suave);
+}
+.dia-resumo:hover { border-color: rgba(126, 53, 70, 0.38); transform: translateY(-2px); box-shadow: var(--sombra-2); }
+.dia-resumo[data-fechado="sim"] { background: var(--marfim-2); }
+.dia-resumo__semana { font-size: var(--t-11); color: var(--texto-3); text-transform: uppercase; letter-spacing: var(--rotulo-esp); }
+.dia-resumo__num { font-size: var(--t-18); color: var(--tinta); font-variant-numeric: tabular-nums; }
+.dia-resumo__mes { font-size: var(--t-11); color: var(--texto-3); text-transform: uppercase; }
+.dia-resumo__contagem {
+  font-size: var(--t-11); color: var(--texto-2);
+  white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis;
+}
+.dia-resumo__fechado { font-size: var(--t-11); color: var(--texto-3); }
+.dia-resumo__barra {
+  width: 100%; height: 3.25rem; margin-top: var(--e2);
+  display: flex; align-items: flex-end;
+  border-radius: var(--r-1); background: var(--marfim-2); overflow: hidden;
+}
+.dia-resumo__cheio { width: 100%; background: var(--rosa-medio); border-radius: var(--r-1) var(--r-1) 0 0; }
+
+/* --- situação do dia: sete contadores, um por estado -------------------- */
+.grade-status { display: grid; gap: var(--e2); grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); }
+.grade-status__item {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--e2);
+  padding: var(--e3); cursor: pointer; font: inherit; text-align: left;
+  border: 1px solid var(--linha); border-radius: var(--r-2); background: var(--superficie);
+  transition: border-color var(--d2) var(--suave), background var(--d2) var(--suave);
+}
+.grade-status__item:hover { border-color: var(--linha-forte); background: var(--marfim); }
+.grade-status__item[data-vazio="sim"] { opacity: 0.55; }
+.grade-status__num { font-size: var(--t-18); color: var(--tinta); font-variant-numeric: tabular-nums; }
+
+/* --- atalhos do dia ----------------------------------------------------- */
+.atalhos { display: grid; gap: var(--e2); grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); }
+.atalho {
+  display: flex; align-items: center; gap: var(--e3);
+  padding: var(--e3) var(--e4); cursor: pointer; font: inherit; text-align: left;
+  border: 1px solid var(--linha); border-radius: var(--r-2); background: var(--superficie);
+  color: var(--texto);
+  transition: border-color var(--d2) var(--suave), color var(--d2) var(--suave),
+              transform var(--d2) var(--suave), box-shadow var(--d2) var(--suave);
+}
+.atalho:hover { border-color: var(--acento); color: var(--acento-texto); transform: translateY(-2px); box-shadow: var(--sombra-1); }
+.atalho svg { width: 1.125rem; height: 1.125rem; flex: none; color: var(--acento-texto); }
+.atalho__texto { font-size: var(--t-13); }
+
+/* ==========================================================================
+   17. BARRAS DE PROPORÇÃO — relatórios e financeiro
+   Grelha rótulo / trilha / valor. A trilha é a mesma peça em toda parte.
+   ========================================================================== */
+.barra-forma__rotulo { display: flex; align-items: center; gap: var(--e2); min-width: 0; color: var(--texto-2); }
+.barra-forma__rotulo svg { width: 0.875rem; height: 0.875rem; flex: none; color: var(--texto-3); }
+.barra-forma__trilha { height: 0.5rem; border-radius: var(--r-pill); background: var(--marfim-2); overflow: hidden; }
+.barra-forma__preenchimento {
+  display: block; height: 100%; min-width: 2px;
+  border-radius: var(--r-pill); background: var(--rosa);
+  transition: width var(--d3) var(--suave);
+}
+.barra-forma__preenchimento--ocupado   { background: var(--rosa-medio); }
+.barra-forma__preenchimento--bloqueio  { background: var(--linha-forte); }
+.barra-forma__preenchimento--livre     { background: var(--folhagem); opacity: 0.55; }
+.barra-forma--clicavel {
+  width: 100%; cursor: pointer; font: inherit; text-align: left;
+  border: 0; border-radius: var(--r-1); background: none;
+}
+.barra-forma--clicavel:hover { background: var(--marfim); }
+.barra-forma--clicavel:focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; }
+@media (max-width: 34rem) {
+  .barra-forma { grid-template-columns: 1fr 4.5rem; row-gap: var(--e1); }
+  .barra-forma__trilha { grid-column: 1 / -1; order: 3; }
+}
+
+/* Gráfico de colunas: o rótulo do valor fica sobre a barra */
+.grafico__valor { font-size: var(--t-11); color: var(--texto-2); font-variant-numeric: tabular-nums; }
+.grafico__area { overflow-x: auto; padding-bottom: var(--e2); }
+
+/* ==========================================================================
+   18. LISTAS LONGAS — agendamentos, clientes, serviços
+   ========================================================================== */
+.lista-topo {
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--e3);
+  flex-wrap: wrap; margin: var(--e4) 0 var(--e3);
+  font-size: var(--t-13); color: var(--texto-2);
+}
+.lista-item { padding: var(--e2) 0; border-bottom: 1px solid var(--linha); }
+.lista-item:last-child { border-bottom: 0; }
+.lista-item__data { display: block; margin-bottom: 0.35rem; }
+
+/* Lista agrupada por dia: um cabeçalho fino separa os blocos sem repetir a
+   data em cada linha. */
+.pilha-dias { display: flex; flex-direction: column; gap: var(--e2); }
+.dia-cabeca {
+  display: flex; align-items: baseline; gap: var(--e3);
+  margin-top: var(--e3); padding-bottom: var(--e1);
+  border-bottom: 1px solid var(--linha);
+}
+.pilha-dias > .dia-cabeca:first-child { margin-top: 0; }
+.dia-cabeca__nome {
+  font-size: var(--t-12); font-weight: 500; letter-spacing: var(--rotulo-esp);
+  text-transform: uppercase; color: var(--texto-3);
+}
+
+.grade-opcoes { display: grid; gap: var(--e2); grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); }
+.marcador {
+  display: flex; align-items: center; gap: var(--e2);
+  padding: var(--e3); cursor: pointer;
+  border: 1px solid var(--linha); border-radius: var(--r-2); background: var(--superficie);
+}
+.marcador:hover { border-color: var(--linha-forte); }
+.marcador input { accent-color: var(--acento); flex: none; }
+.contador-filtros {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.125rem; height: 1.125rem; padding: 0 0.25rem; margin-left: var(--e2);
+  border-radius: var(--r-pill); background: var(--acento); color: var(--branco);
+  font-size: var(--t-11); font-variant-numeric: tabular-nums;
+}
+.filtros__grupo { display: flex; align-items: center; gap: var(--e2); flex-wrap: wrap; }
+/* As datas do período personalizado vivem na MESMA régua dos chips: por isso
+   alinham pelo centro, e não pela base (com `flex-end` o campo, mais alto,
+   puxava a régua inteira para baixo). O rótulo agora fica ao lado do campo
+   (.campo--curto), então não há mais altura de rótulo sobrando em cima. */
+.filtros__datas { display: flex; align-items: center; gap: var(--e3); flex-wrap: wrap; }
+.filtros__datas[hidden] { display: none; }
+
+/* --- CRM: ficha do cliente --------------------------------------------- */
+.voltar {
+  display: inline-flex; align-items: center; gap: var(--e2);
+  margin-bottom: var(--e3); padding: var(--e1) 0; cursor: pointer;
+  border: 0; background: none; font: inherit; color: var(--texto-2);
+}
+.voltar:hover { color: var(--acento-texto); }
+.voltar::before { content: "←"; font-size: var(--t-14); }
+.bloco__cabecalho { display: flex; align-items: center; justify-content: space-between; gap: var(--e3); flex-wrap: wrap; }
+.grade--compacta { gap: var(--e3); grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); }
+.linha-dado__rotulo { display: flex; align-items: center; gap: var(--e2); min-width: 0; color: var(--texto-2); }
+.linha-dado__rotulo svg { width: 0.875rem; height: 0.875rem; flex: none; color: var(--texto-3); }
+.linha-dado--clicavel {
+  width: 100%; cursor: pointer; font: inherit; text-align: left;
+  border: 0; border-left: 0; border-right: 0; border-radius: var(--r-1); background: none;
+}
+.linha-dado--clicavel:hover { background: var(--marfim); }
+.linha-tempo__item--clicavel {
+  width: 100%; cursor: pointer; font: inherit; text-align: left;
+  border: 0; background: none; border-radius: var(--r-1);
+}
+.linha-tempo__item--clicavel:hover { background: var(--marfim); }
+.linha-tempo__fim { color: var(--texto-3); }
+
+/* --- grade de serviços -------------------------------------------------- */
+.grade-servicos { display: grid; gap: var(--e4); grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); }
+.servico-cartao__resumo {
+  font-size: var(--t-13); color: var(--texto-2); line-height: var(--alt-texto);
+  margin-top: var(--e2);
+}
+.servico-cartao__dados { display: flex; flex-direction: column; margin-top: var(--e3); }
+.servico-cartao__acoes { display: flex; align-items: center; gap: var(--e2); flex: none; }
+.servico-cartao__demo { margin-top: var(--e2); }
+
+/* ==========================================================================
+   19. CONFIGURAÇÕES
+   ========================================================================== */
+.campo-duplo { display: grid; gap: var(--e3); grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); }
+
+/* Corpo das configurações: em tela larga as seções se repartem em duas
+   colunas e cada seção para de esticar. Nada aqui limita a PÁGINA — o
+   painel continua usando a área útil inteira; quem ganha teto é o miolo,
+   para o formulário não virar campos de 1 metro de largura. */
+.cnf-corpo { display: grid; gap: var(--e4); align-items: start; }
+.cnf-corpo > .bloco + .bloco { margin-top: 0; }
+@media (min-width: 68rem) {
+  .cnf-corpo { grid-template-columns: repeat(2, minmax(20rem, 1fr)); }
+  .cnf-corpo > .bloco { max-width: 60rem; }
+  /* Seções de largura própria (a grade de horários, por exemplo) tomam a
+     linha inteira: dividi-las ao meio espremeria os quatro campos. */
+  .cnf-corpo > .bloco--largo { grid-column: 1 / -1; max-width: none; }
+}
+.campo-par { display: grid; gap: var(--e3); grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+.linha-opcao { display: flex; align-items: center; gap: var(--e3); flex-wrap: wrap; padding: var(--e2) 0; }
+.linha-opcao__texto { flex: 1; min-width: 0; font-size: var(--t-14); color: var(--texto); }
+.linha-opcao--clicavel { cursor: pointer; }
+.linha-opcao--clicavel:hover .linha-opcao__texto { color: var(--acento-texto); }
+.linha-opcao svg { width: 1.125rem; height: 1.125rem; flex: none; color: var(--texto-3); }
+.linha-opcao .interruptor { margin-left: auto; }
+
+.horarios { display: flex; flex-direction: column; }
+.horario {
+  display: grid; grid-template-columns: 9rem auto 1fr; align-items: center;
+  gap: var(--e3); padding: var(--e3) 0;
+}
+.horario + .horario { border-top: 1px solid var(--linha); }
+.horario__dia { display: flex; align-items: center; gap: var(--e2); }
+.horario__nome { font-size: var(--t-14); color: var(--texto); }
+.horario__campos { display: flex; align-items: flex-end; gap: var(--e3); flex-wrap: wrap; }
+.horario__campos[hidden] { display: none; }
+.horario__campos .campo { min-width: 5.5rem; }
+.horario__pausa { display: flex; align-items: flex-end; gap: var(--e2); }
+.horario__resumo { grid-column: 1 / -1; }
+@media (max-width: 46rem) {
+  .horario { grid-template-columns: 1fr auto; }
+}
+
+.nao-informado {
+  font-style: italic; color: var(--texto-3);
+  border-bottom: 1px dashed var(--linha-forte);
+}
+
+.credito__marca { display: flex; align-items: center; gap: var(--e3); }
+.credito__titulo { font-size: var(--t-14); color: var(--texto); }
+.credito__linha { font-size: var(--t-12); color: var(--texto-3); font-variant-numeric: tabular-nums; }
+
+/* Célula de tabela: avatar + nome + linha de apoio */
+.linha-cliente { display: flex; align-items: center; gap: var(--e2); min-width: 0; }
+.linha-cliente > span { display: flex; flex-direction: column; min-width: 0; }
+
+/* ==========================================================================
+   20. OPERAÇÃO DO DIA — estado temporal, pagamento e finalização
+
+   Três peças que a operação real do salão pediu:
+
+     .temporal     quanto falta / quanto passou — o CRONÔMETRO
+     .selo-pag     como o pagamento foi registrado
+     .finalizar    a comanda da finalização, com o total calculado
+
+   Cronômetro e situação do atendimento são coisas DIFERENTES e ficam
+   separadas no desenho: o selo (.selo--*) diz "confirmado", "em
+   atendimento"; o chip (.temporal) diz "começa em 12 min". Os dois podem
+   aparecer lado a lado sem competir, porque o chip não tem fundo cheio —
+   é contorno. Só o atraso levanta a voz, e levanta em vermelho.
+   ========================================================================== */
+
+/* --- cronômetro: a escada de ênfase, do mais neutro ao mais urgente ---- */
+.temporal {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.1rem var(--e2);
+  border: 1px solid transparent; border-radius: var(--r-pill);
+  font-size: var(--t-11); font-weight: 500; letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+  transition: background var(--d2) var(--suave), border-color var(--d2) var(--suave),
+              color var(--d2) var(--suave);
+}
+.temporal__texto { line-height: 1.5; }
+.temporal__pulso {
+  width: 0.375rem; height: 0.375rem; border-radius: 50%; flex: none;
+  background: currentColor;
+  animation: ehn-pulso-fraco 2.2s var(--suave) infinite;
+}
+@keyframes ehn-pulso-fraco {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+
+/* Longe do horário: informativo. Só contorno, sem cor de alarme. */
+.temporal--longe    { border-color: var(--linha-2); color: var(--texto-2); }
+/* Faltando 10 a 6 minutos: ganha contorno na cor da casa. */
+.temporal--proximo  { border-color: rgba(177, 117, 129, 0.42); color: var(--acento-texto); background: var(--rosa-lavado); }
+/* Faltando 5 a 1: um degrau acima — fundo lavado e peso. É o momento de
+   olhar para a porta. */
+.temporal--iminente {
+  border-color: var(--acento); color: var(--acento-texto);
+  background: var(--rosa-lavado); font-weight: 600;
+  box-shadow: 0 0 0 3px rgba(177, 117, 129, 0.10);
+}
+/* No horário: a cliente é agora. */
+.temporal--no-horario {
+  border-color: var(--vinho); color: var(--vinho);
+  background: #F5E7EB; font-weight: 600; letter-spacing: 0.06em;
+}
+/* Passou do horário — vermelho elegante, sem fundo cheio. O fundo cheio
+   fica reservado para o atraso crítico, senão os dois pesam igual. */
+.temporal--atraso { color: var(--atraso); border-color: rgba(138, 74, 56, 0.4); }
+/* Passou mais de 10 minutos: é o único elemento do painel que grita. */
+.temporal--atraso-critico {
+  color: #FBF7F6; background: var(--atraso-critico);
+  border-color: var(--atraso-critico); font-weight: 600;
+}
+/* Em atendimento: relógio correndo, sem alarde. */
+.temporal--em-curso { border-color: var(--linha-2); color: var(--texto-2); background: var(--superficie-alt); }
+
+/* Na linha da lista o chip não cresce; num bloco da agenda ele respira. */
+.temporal--bloco { font-size: var(--t-12); padding: 0.15rem var(--e3); }
+/* No rodapé do cartão de destaque, ele ocupa a ponta. */
+.temporal--destaque { font-size: var(--t-12); padding: 0.25rem var(--e3); }
+.temporal--gaveta { font-size: var(--t-13); padding: 0.3rem var(--e3); }
+
+/* --- selo de pagamento -------------------------------------------------- */
+.selo-pag {
+  display: inline-flex; align-items: center;
+  padding: 0.1rem var(--e2); border-radius: var(--r-pill);
+  font-size: var(--t-11); font-weight: 500; letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+  background: var(--pag-neutro-fundo); color: var(--pag-neutro-texto);
+}
+.selo-pag--pago      { background: var(--pag-pago-fundo);      color: var(--pag-pago-texto); }
+.selo-pag--pendente  { background: var(--pag-pendente-fundo);  color: var(--pag-pendente-texto); }
+.selo-pag--parcial   { background: var(--pag-parcial-fundo);   color: var(--pag-parcial-texto); }
+.selo-pag--estornado { background: var(--pag-estornado-fundo); color: var(--pag-estornado-texto); }
+/* Sem valor lançado o selo não é verde nem vermelho: é neutro, porque a
+   informação é "ninguém lançou", não "está pago" nem "está devendo". */
+.selo-pag--nao-cobrado { background: var(--marfim-2); color: var(--texto-3); }
+
+/* --- mini-números da ocupação ------------------------------------------ */
+.mini-numeros {
+  display: grid; gap: var(--e3); margin-top: var(--e4);
+  grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr));
+  padding-top: var(--e4); border-top: 1px solid var(--linha);
+}
+.mini-numero { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+.mini-numero__valor { font-size: var(--t-18); color: var(--tinta); line-height: 1.2; }
+.mini-numero__rotulo {
+  font-size: var(--t-11); color: var(--texto-3);
+  text-transform: uppercase; letter-spacing: var(--rotulo-esp);
+}
+
+/* --- finalização: comanda + total -------------------------------------- */
+.finalizar { display: flex; flex-direction: column; gap: var(--e4); }
+.finalizar__total {
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--e3);
+  padding: var(--e4) var(--e5);
+  border: 1px solid var(--linha-2); border-radius: var(--r-3);
+  background: var(--superficie-alt); font-size: var(--t-13); color: var(--texto-2);
+}
+.finalizar__total b {
+  font-family: var(--fonte-titulo); font-size: var(--t-26);
+  color: var(--tinta); font-variant-numeric: tabular-nums;
+}
+/* Total vazio NÃO é R$ 0,00 — é um traço discreto. O olho precisa entender
+   na hora que nenhum valor foi digitado, e não que o serviço é de graça. */
+.finalizar__total[data-vazio] b { color: var(--texto-3); font-weight: 400; }
+
+.grade-opcoes--formas { grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); }
+.grade-opcoes--formas .chip { justify-content: center; }
+
+/* --- rótulo de valor ausente -------------------------------------------- */
+.valor-ausente { font-style: italic; color: var(--texto-3); }
+
+/* ==========================================================================
+   21. EQUIPE — cartões de posto, vagas, régua de dias e acesso
+
+   Desenha o que as abas Equipe, Agenda, Visão Geral e Configurações passaram
+   a usar. A barra de vagas é a MESMA peça da barra-forma: trilha em marfim,
+   preenchimento arredondado, largura vinda do dado. O que muda é o que ela
+   diz — ocupação sobre teto, não proporção de uma lista.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   21.1 SITUAÇÃO DO POSTO
+   Todo chip de situação tem COR. Sem estas regras, o selo aparecia como texto
+   solto: a bancada via o nome, não o estado. As cinco situações de
+   SITUACOES_EQUIPE ganham uma classe cada — nenhuma fica sem fundo.
+   -------------------------------------------------------------------------- */
+.eq-sit {
+  display: inline-flex; align-items: center; gap: 0.3rem; flex: none;
+  padding: 0.15rem var(--e2); border-radius: var(--r-pill);
+  font-size: var(--t-11); font-weight: 500; letter-spacing: 0.01em;
+  white-space: nowrap;
+  background: var(--marfim-2); color: var(--texto-2);
+}
+.eq-sit::before {
+  content: ""; width: 0.375rem; height: 0.375rem; border-radius: 50%;
+  background: currentColor; flex: none;
+}
+.eq-sit--atendimento { background: var(--atendimento-fundo); color: var(--atendimento-texto); }
+.eq-sit--ativa       { background: var(--confirmado-fundo);  color: var(--confirmado-texto); }
+.eq-sit--intervalo   { background: var(--pendente-fundo);    color: var(--pendente-texto); }
+.eq-sit--folga       { background: var(--concluido-fundo);   color: var(--concluido-texto); }
+.eq-sit--inativa     { background: var(--cancelado-fundo);   color: var(--cancelado-texto); }
+/* Posto inativo é cinza e não pede o ponto cheio: o olho precisa ver que ele
+   saiu do rodízio, e o ponto cheio é justamente o sinal de "está em atividade".
+   O escopo por `inativo` (e não por `--inativa`) é deliberado: é o mesmo estado
+   que apaga o cartão inteiro, venha ele de `situacao` ou do cadastro. */
+.eq-cartao[data-inativo="sim"] .eq-sit::before { background: none; box-shadow: inset 0 0 0 1.5px currentColor; }
+
+/* --------------------------------------------------------------------------
+   21.2 BARRA DE VAGAS (§7)
+   "5 / 8 vagas ocupadas" e "3 vagas disponíveis" saem do MESMO objeto que
+   alimenta a largura do preenchimento. A barra é a leitura rápida do número,
+   nunca uma segunda conta.
+   -------------------------------------------------------------------------- */
+.vagas { display: flex; flex-direction: column; gap: var(--e2); padding: var(--e3) var(--e4);
+  border: 1px solid var(--linha); border-radius: var(--r-3); background: var(--superficie-alt); }
+.vagas__topo { display: flex; align-items: baseline; justify-content: space-between; gap: var(--e3); flex-wrap: wrap; }
+.vagas__contagem { font-size: var(--t-13); color: var(--texto-2); }
+.vagas__contagem b { font-family: var(--fonte-titulo); font-size: var(--t-18); color: var(--tinta); }
+.vagas__livres { font-size: var(--t-12); color: var(--texto-3); }
+.vagas__trilha { height: 0.5rem; border-radius: var(--r-pill); background: var(--marfim-2); overflow: hidden; }
+.vagas__preenchimento {
+  display: block; height: 100%; min-width: 2px;
+  border-radius: var(--r-pill); background: var(--rosa-medio);
+  transition: width var(--d3) var(--suave);
+}
+/* No teto a barra muda de tom: é o único momento em que a informação vira
+   "não cabe mais ninguém", e a cor precisa dizer isso sem alarde. */
+.vagas[data-cheio="sim"] .vagas__preenchimento { background: var(--vinho); }
+.vagas[data-cheio="sim"] .vagas__livres { color: var(--vinho); }
+/* Dentro do CARTÃO a mesma peça não pode ser uma caixa: ela vira faixa
+   sem borda, colada ao corpo do cartão. Sem esta regra o cartão compacto
+   herdava a moldura e o padding do bloco grande e ficava pesado. */
+.vagas--compacto { padding: 0; border: 0; background: none; gap: var(--e1); }
+.vagas--compacto .vagas__contagem b { font-size: var(--t-16); }
+.vagas--compacto .vagas__topo { gap: var(--e2); }
+
+/* --------------------------------------------------------------------------
+   21.3 CARTÃO DO POSTO (§3)
+   -------------------------------------------------------------------------- */
+.eq-cartao {
+  display: flex; flex-direction: column; gap: var(--e4);
+  padding: var(--e5);
+  border: 1px solid var(--linha); border-radius: var(--r-3);
+  background: var(--superficie); box-shadow: var(--sombra-1);
+  transition: border-color var(--d2) var(--suave), box-shadow var(--d2) var(--suave),
+              transform var(--d2) var(--suave);
+}
+.eq-cartao:hover { border-color: rgba(126, 53, 70, 0.38); box-shadow: var(--sombra-2); transform: translateY(-2px); }
+.eq-cartao:active { transform: translateY(0); box-shadow: var(--sombra-1); }
+.eq-cartao[data-inativo="sim"] { opacity: 0.72; }
+.eq-cartao__topo { display: flex; align-items: center; gap: var(--e3); }
+.eq-cartao__identidade { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.1rem; }
+.eq-cartao__nome { font-family: var(--fonte-titulo); font-size: var(--t-18); color: var(--tinta); }
+.eq-cartao__funcao { font-size: var(--t-12); color: var(--texto-3); }
+.eq-cartao__corpo { display: flex; flex-direction: column; gap: var(--e3); }
+/* O aviso de posto que não trabalha hoje não é um erro: é marfim, não vermelho. */
+.eq-cartao__aviso {
+  font-size: var(--t-13); color: var(--texto-2);
+  padding: var(--e3) var(--e4); border-radius: var(--r-3);
+  background: var(--marfim-2); border: 1px dashed var(--linha-2);
+}
+.eq-cartao__dados { display: flex; flex-direction: column; gap: var(--e2); }
+.eq-cartao__servicos { display: flex; flex-direction: column; gap: var(--e1); }
+.eq-cartao__rodape {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--e3); flex-wrap: wrap;
+  padding-top: var(--e3); border-top: 1px solid var(--linha);
+  margin-top: auto;
+}
+.linha-media { display: flex; align-items: baseline; justify-content: space-between; gap: var(--e3); }
+.linha-media__rotulo { display: flex; align-items: center; gap: var(--e2); font-size: var(--t-12); color: var(--texto-3); min-width: 0; }
+.linha-media__rotulo svg { width: 0.875rem; height: 0.875rem; flex: none; }
+.linha-media__valor { font-size: var(--t-13); color: var(--texto-2); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* --------------------------------------------------------------------------
+   21.4 RÉGUA DOS PRÓXIMOS DIAS
+   -------------------------------------------------------------------------- */
+.regua-dias { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--e2); }
+.regua-dias__dia {
+  display: flex; flex-direction: column; align-items: center; gap: 0.1rem;
+  padding: var(--e2) var(--e1);
+  border: 1px solid var(--linha); border-radius: var(--r-2); background: var(--superficie-alt);
+}
+/* Dia fechado é lido pela AUSÊNCIA: sem borda, sem fundo de cartão. */
+.regua-dias__dia[data-fechado="sim"] { background: none; border-color: transparent; }
+.regua-dias__nome { font-size: var(--t-11); letter-spacing: var(--rotulo-esp); text-transform: uppercase; color: var(--texto-3); }
+.regua-dias__num { font-family: var(--fonte-titulo); font-size: var(--t-18); color: var(--tinta); font-variant-numeric: tabular-nums; }
+.regua-dias__n { font-size: var(--t-11); color: var(--texto-3); font-variant-numeric: tabular-nums; }
+.regua-dias__dia[data-fechado="sim"] .regua-dias__nome,
+.regua-dias__dia[data-fechado="sim"] .regua-dias__num,
+.regua-dias__dia[data-fechado="sim"] .regua-dias__n { color: var(--texto-3); opacity: 0.65; }
+
+/* --------------------------------------------------------------------------
+   21.5 DIAS DA SEMANA E SERVIÇOS DO POSTO (§4, §11)
+   -------------------------------------------------------------------------- */
+.opcoes-dias { display: flex; flex-wrap: wrap; gap: var(--e2); }
+.opcao-dia {
+  min-width: 3.25rem; height: 2.25rem; padding: 0 var(--e3);
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--linha-2); border-radius: var(--r-2);
+  background: var(--branco); color: var(--texto-2);
+  font-size: var(--t-13); font-weight: 500; letter-spacing: 0.02em;
+  transition: border-color var(--d2) var(--suave), background var(--d2) var(--suave), color var(--d2) var(--suave);
+}
+.opcao-dia:hover { border-color: var(--linha-forte); color: var(--texto); }
+.opcao-dia--on, .opcao-dia[aria-pressed="true"] {
+  border-color: var(--acento); background: var(--rosa-lavado); color: var(--vinho);
+}
+.opcao-servico {
+  display: flex; flex-direction: column; gap: var(--e1);
+  padding: var(--e3) var(--e4);
+  border: 1px solid var(--linha); border-radius: var(--r-2); background: var(--superficie);
+}
+.opcao-servico__sub { font-size: var(--t-11); color: var(--texto-3); padding-left: 1.6rem; }
+
+/* --------------------------------------------------------------------------
+   21.6 FILTRO POR PROFISSIONAL NA AGENDA (§8)
+   Discreto de propósito: é um grupo de botões de texto, não um painel. O
+   escolhido ganha fundo de pílula; os outros ficam apagados até o hover.
+   -------------------------------------------------------------------------- */
+.filtro-posto {
+  display: inline-flex; align-items: center; gap: 0.125rem; padding: 0.125rem;
+  background: var(--marfim-2); border: 1px solid var(--linha); border-radius: var(--r-pill);
+}
+.filtro-posto__opcao {
+  padding: 0 var(--e3); height: 1.75rem;
+  display: inline-flex; align-items: center;
+  border-radius: var(--r-pill);
+  font-size: var(--t-12); font-weight: 500; color: var(--texto-3); white-space: nowrap;
+  transition: background var(--d2) var(--suave), color var(--d2) var(--suave);
+}
+.filtro-posto__opcao:hover { color: var(--texto); }
+.filtro-posto__opcao[data-escolhido="sim"] { background: var(--branco); color: var(--tinta); box-shadow: var(--sombra-1); }
+/* A sigla dentro do bloco (§8): só aparece na visão "Todas", para que a
+   timeline inteira continue legível sem virar uma colcha de retalhos. */
+.agenda-bloco__posto {
+  align-self: flex-start; flex: none;
+  padding: 0 0.35rem; border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.72);
+  font-size: var(--t-11); font-weight: 500; letter-spacing: 0.02em; color: var(--texto-2);
+}
+
+/* --------------------------------------------------------------------------
+   21.7 OCUPAÇÃO DA EQUIPE — Agenda (§15)
+   Leitura, não um segundo painel: uma linha por posto, largura vinda de
+   `vagasDe`. Clicar filtra a agenda por aquele posto.
+   -------------------------------------------------------------------------- */
+.ocupacao { display: flex; flex-direction: column; gap: var(--e3); }
+.ocupacao__topo { display: flex; align-items: baseline; justify-content: space-between; gap: var(--e3); flex-wrap: wrap; }
+.ocupacao__titulo { font-size: var(--t-12); letter-spacing: var(--rotulo-esp); text-transform: uppercase; color: var(--texto-3); }
+.ocupacao__resumo { font-size: var(--t-12); color: var(--texto-3); font-variant-numeric: tabular-nums; }
+.ocupacao__linhas { display: flex; flex-direction: column; gap: 0.125rem; }
+.ocupacao__linha {
+  display: grid; grid-template-columns: auto auto minmax(4rem, 1fr) auto auto;
+  align-items: center; gap: var(--e3); padding: var(--e2) var(--e3);
+  border-radius: var(--r-2); text-align: left;
+  transition: background var(--d2) var(--suave);
+}
+.ocupacao__linha:hover { background: var(--marfim); }
+.ocupacao__linha[data-escolhido="sim"] { background: var(--rosa-lavado); }
+.ocupacao__sigla {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.75rem; height: 1.75rem; border-radius: 50%; flex: none;
+  background: var(--marfim-2); color: var(--vinho);
+  font-size: var(--t-11); font-weight: 600; letter-spacing: 0.02em;
+}
+.ocupacao__sit { font-size: var(--t-11); color: var(--texto-3); white-space: nowrap; }
+.ocupacao__barra { height: 0.375rem; border-radius: var(--r-pill); background: var(--marfim-2); overflow: hidden; }
+.ocupacao__preenchimento { display: block; height: 100%; min-width: 2px; border-radius: var(--r-pill); background: var(--rosa-medio); transition: width var(--d3) var(--suave); }
+.ocupacao__num { font-size: var(--t-12); color: var(--texto-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ocupacao__livres { font-size: var(--t-11); color: var(--texto-3); white-space: nowrap; }
+
+/* --------------------------------------------------------------------------
+   21.8 EQUIPE HOJE — Visão Geral (§14)
+   Irmão de 21.7, mesmos números, cabeçalho de linha explícito. Mostra o NOME
+   inteiro aqui porque a Visão Geral é a primeira tela do dia: quem chega lê
+   nomes, não siglas. A sigla fica ao lado, como âncora visual do resto do app.
+   -------------------------------------------------------------------------- */
+.equipe-hoje { display: flex; flex-direction: column; gap: 0.125rem; }
+.equipe-hoje__linha {
+  display: grid;
+  grid-template-columns: 1.75rem minmax(0, 7.5rem) minmax(0, 1fr) minmax(4rem, 1.4fr) auto auto;
+  align-items: center; gap: var(--e3); padding: var(--e2) var(--e3);
+  border-radius: var(--r-2); text-align: left;
+  transition: background var(--d2) var(--suave);
+}
+.equipe-hoje__linha:hover { background: var(--marfim); }
+.equipe-hoje__sigla {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.75rem; height: 1.75rem; border-radius: 50%; flex: none;
+  background: var(--marfim-2); color: var(--vinho);
+  font-size: var(--t-11); font-weight: 600; letter-spacing: 0.02em;
+}
+.equipe-hoje__nome { font-size: var(--t-13); color: var(--texto); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.equipe-hoje__sit { font-size: var(--t-11); color: var(--texto-3); white-space: nowrap; }
+.equipe-hoje__barra { height: 0.375rem; border-radius: var(--r-pill); background: var(--marfim-2); overflow: hidden; }
+.equipe-hoje__barra[data-vazia="sim"] { background: none; }
+.equipe-hoje__preenchimento { display: block; height: 100%; min-width: 2px; border-radius: var(--r-pill); background: var(--rosa-medio); transition: width var(--d3) var(--suave); }
+.equipe-hoje__linha[data-trabalhando="nao"] .equipe-hoje__nome { color: var(--texto-3); }
+.equipe-hoje__num { font-size: var(--t-12); color: var(--texto-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.equipe-hoje__livres { font-size: var(--t-11); color: var(--texto-3); white-space: nowrap; }
+
+/* --------------------------------------------------------------------------
+   21.9 ACESSO AO SISTEMA — Configurações (§12)
+   O cartão da proprietária é o que está em uso: borda de acento e fundo
+   lavado. O da recepção é um perfil previsto — marfim, sem acento nenhum.
+   A diferença precisa ser visível ANTES de ler o selo.
+   -------------------------------------------------------------------------- */
+.acesso-perfil {
+  display: flex; flex-direction: column; gap: var(--e3);
+  padding: var(--e4) var(--e5);
+  border: 1px solid var(--linha); border-radius: var(--r-3); background: var(--superficie);
+}
+.acesso-perfil + .acesso-perfil { margin-top: var(--e3); }
+.acesso-perfil[data-atual="sim"] { border-color: var(--acento); background: var(--rosa-lavado); }
+.acesso-perfil__topo { display: flex; align-items: center; gap: var(--e3); }
+.acesso-perfil__identidade { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.1rem; }
+.acesso-perfil__areas { display: flex; flex-direction: column; gap: var(--e2); }
+.acesso-perfil__rotulo { font-size: var(--t-11); letter-spacing: var(--rotulo-esp); text-transform: uppercase; color: var(--texto-3); }
+.acesso-perfil__chips, .chips-lista { display: flex; flex-wrap: wrap; gap: var(--e2); }
+.chip--area { font-size: var(--t-11); padding: 0.15rem var(--e2); cursor: default; }
+.chip--area:hover { border-color: var(--linha); color: var(--texto-2); }
+/* A lista do que só a dona enxerga é um rodapé informativo, não um aviso. */
+.acesso-perfil__exclusivo { padding-top: var(--e2); border-top: 1px solid var(--linha); }
+.linha-opcao__nota { flex-basis: 100%; padding-left: 1.6rem; }
+
+/* --------------------------------------------------------------------------
+   21.10 AÇÕES DE FIM DE SEÇÃO
+   O rodapé de um formulário longo. Sem isto os botões ficam colados no
+   último campo e o olho não vê onde a seção termina.
+   -------------------------------------------------------------------------- */
+.bloco__acoes {
+  display: flex; align-items: center; gap: var(--e3); flex-wrap: wrap;
+  margin-top: var(--e5); padding-top: var(--e4); border-top: 1px solid var(--linha);
+}
+.bloco__acoes .btn { flex: none; }
+.bloco__acoes .miudo { flex: 1; min-width: 12rem; }
+
+/* --------------------------------------------------------------------------
+   21.11 430 / 390 / 360 — uma coluna, sem rolagem lateral (§18)
+   Cortar de 7 para 4 dias numa grade fixa criava uma sobra morta à direita.
+   `auto-fit` resolve sozinho: o dia encolhe até o mínimo de 2,6rem e a régua
+   quebra linha em vez de estourar. `min-width: 0` nos filhos é o que impede
+   o texto de forçar a largura do cartão.
+   -------------------------------------------------------------------------- */
+@media (max-width: 34rem) {
+  /* Vagas: contagem em cima, vagas livres embaixo. */
+  .vagas__topo { flex-direction: column; align-items: flex-start; gap: var(--e1); }
+  /* Régua: quebra linha em vez de estourar. */
+  .regua-dias { grid-template-columns: repeat(auto-fit, minmax(2.6rem, 1fr)); }
+  /* Filtro da agenda: rolagem DENTRO da própria pílula, nunca na página. */
+  .filtro-posto { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .filtro-posto::-webkit-scrollbar { display: none; }
+  /* Ocupação: a situação perde a coluna e vira legenda sob a sigla. */
+  .ocupacao__linha { grid-template-columns: auto minmax(3rem, 1fr) auto; row-gap: var(--e1); }
+  .ocupacao__sit { grid-column: 1 / -1; order: 3; }
+  .ocupacao__livres { order: 3; }
+  /* Equipe hoje: nome e situação na primeira linha, barra e números na segunda. */
+  .equipe-hoje__linha {
+    grid-template-columns: 1.75rem minmax(0, 1fr) auto;
+    row-gap: var(--e1);
+  }
+  .equipe-hoje__sit { grid-column: 2 / 3; grid-row: 2; }
+  .equipe-hoje__barra { grid-column: 1 / -1; order: 3; }
+  .equipe-hoje__num { grid-column: 3; grid-row: 2; text-align: right; }
+  .equipe-hoje__livres { grid-column: 3; grid-row: 1; }
+  /* Cartão do posto: rodapé quebra e o botão ocupa a linha toda. */
+  .eq-cartao { padding: var(--e4); }
+  .eq-cartao__rodape { flex-direction: column; align-items: stretch; }
+  .eq-cartao__rodape .btn { justify-content: center; }
+  .acesso-perfil { padding: var(--e4); }
+  .acesso-perfil__topo { flex-wrap: wrap; }
+  .bloco__acoes { flex-direction: column; align-items: stretch; }
+  .bloco__acoes .btn { justify-content: center; }
+  /* A sigla dentro do bloco não pode empurrar a timeline no celular. */
+  .agenda-bloco__posto { font-size: 0.625rem; padding: 0 0.25rem; }
+}
+
+/* --------------------------------------------------------------------------
+   21.12 MOVIMENTO (§17)
+   A barra de vagas cresce quando o dado muda de dia — é a única animação
+   nova, e ela existe para mostrar que o número mudou, não para enfeitar.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .vagas__preenchimento, .ocupacao__preenchimento, .equipe-hoje__preenchimento { transition: none; }
+}

@@ -1,0 +1,639 @@
+/* ==========================================================================
+   EXCLUSIVA HAIR — SISTEMA DE GESTÃO · base.css
+   Tokens, reset, tipografia e primitivos de interface.
+
+   A identidade visual (rosa #B17581, vinho, marfim, dourado, folhagem) foi
+   herdada dos materiais reais da marca e da apresentação pública, mas
+   RECALIBRADA para interface densa: contraste mais alto, raios menores,
+   sombras discretas. Isto é ferramenta de trabalho, não peça editorial.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. TOKENS
+   -------------------------------------------------------------------------- */
+:root {
+  /* -- Cor: amostrada da logo, do ambiente e das fotos da marca ---------- */
+  --marfim:      #FAF7F4;   /* tela de fundo do painel                      */
+  --marfim-2:    #F3EDE8;   /* faixa alternada / cabeçalho de tabela        */
+  --areia:       #E8DCD2;   /* poço neutro quente                           */
+  --branco:      #FFFFFF;   /* superfície de cartão                         */
+  --rosa:        #B17581;   /* cor oficial da logo (amostrada)              */
+  --rosa-medio:  #C997A1;
+  --rosa-claro:  #DEB4BD;
+  --rosa-lavado: #F7EEF1;   /* superfície tingida p/ estado ativo           */
+  --vinho:       #5C2B38;
+  --vinho-2:     #3F1E28;
+  --vinho-3:     #2E141B;   /* trilho lateral                               */
+  --dourado:     #A98247;   /* molduras dos espelhos                        */
+  --folhagem:    #33502B;   /* parede verde do salão                        */
+
+  /* -- Texto: cada tom com contraste conferido sobre o marfim ------------ */
+  --tinta:    #2A151C;      /* títulos — 15,4:1                            */
+  --texto:    #3F1E28;      /* corpo   — 13,2:1                            */
+  --texto-2:  #6E5460;      /* apoio   —  6,3:1                            */
+  --texto-3:  #77626C;      /* rótulos — 4,6:1 no pior fundo do painel      */
+  /* Rosa da marca só passa AA em texto grande (3,66:1). Para texto pequeno
+     existe um tom escurecido que preserva o matiz — mesma solução do site. */
+  --acento:       var(--rosa);
+  --acento-texto: #82545D;  /* 6,0:1 sobre branco                          */
+
+  /* -- Superfícies e traços ---------------------------------------------- */
+  --superficie:      var(--branco);
+  --superficie-alt:  #FCFAF8;
+  --linha:           rgba(63, 30, 40, 0.10);
+  --linha-2:         rgba(63, 30, 40, 0.16);
+  --linha-forte:     rgba(63, 30, 40, 0.30);
+  --veu:             rgba(42, 21, 28, 0.42);
+
+  /* -- Estados: matriz tirada da própria paleta da marca ------------------ */
+  --novo-fundo:       #F7EEF1;  --novo-texto:       #7A4A57;
+  --pendente-fundo:   #F6EFE3;  --pendente-texto:   #7A5A26;
+  --confirmado-fundo: #EAF0E6;  --confirmado-texto: #3C5A32;
+  --atendimento-fundo:#F2E6EA;  --atendimento-texto:#5C2B38;
+  --concluido-fundo:  #EFEFEA;  --concluido-texto:  #54524A;
+  --cancelado-fundo:  #F1EFEF;  --cancelado-texto:  #7C6A72;
+  --ausente-fundo:    #F5E9E6;  --ausente-texto:    #8A4A38;
+
+  /* Faixa de aviso de dado demonstrativo */
+  --demo-fundo:   #F6EFE3;
+  --demo-linha:   #E3D3B4;
+  --demo-texto:   #6E5423;
+
+  /* Pagamento: quatro situações, quatro fundos. Pago e pendente são as que
+     aparecem o tempo todo; parcial e estornado fecham a lista para nenhuma
+     situação cair num cinza genérico. */
+  --pag-pago-fundo:      #EAF0E6;  --pag-pago-texto:      #3C5A32;
+  --pag-pendente-fundo:  #F6EFE3;  --pag-pendente-texto:  #7A5A26;
+  --pag-parcial-fundo:   #F2E6EA;  --pag-parcial-texto:   #5C2B38;
+  --pag-estornado-fundo: #F1EFEF;  --pag-estornado-texto: #7C6A72;
+  --pag-neutro-fundo:    #F3EDE8;  --pag-neutro-texto:    #7C6A72;
+
+  /* Atraso e iminência: os DOIS únicos pontos em que o painel usa vermelho.
+     Tirantes da matriz da marca — o vermelho do estado "ausente", um grau
+     acima, para o atraso crítico. */
+  --atraso:          #8A4A38;
+  --atraso-fundo:    #F5E9E6;
+  --atraso-critico:  #7A2E22;
+  --atraso-critico-fundo: #F3E0DA;
+
+  /* -- Tipografia --------------------------------------------------------- */
+  --fonte-titulo: "Marcellus", "Lora", "Century Schoolbook L", Georgia, "Times New Roman", serif;
+  --fonte-texto:  "Jost", "Poppins", "Lato", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --fonte-num:    "Jost", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --t-32: 2rem;      --t-26: 1.625rem;  --t-21: 1.3125rem;  --t-18: 1.125rem;
+  --t-16: 1rem;      --t-15: 0.9375rem; --t-14: 0.875rem;  --t-13: 0.8125rem;
+  --t-12: 0.75rem;   --t-11: 0.6875rem;
+
+  --alt-junta:  1.25;
+  --alt-texto:  1.55;
+  --alt-solta:  1.7;
+  --rotulo-esp: 0.09em;   /* rótulos caixa-alta, bem menos que no site  */
+
+  /* -- Espaçamento: escala curta, de interface --------------------------- */
+  --e1: 0.25rem;  --e2: 0.5rem;   --e3: 0.75rem;  --e4: 1rem;
+  --e5: 1.25rem;  --e6: 1.5rem;   --e7: 2rem;    --e8: 2.5rem;
+  --e9: 3rem;     --e10: 4rem;
+
+  /* -- Medidas de layout -------------------------------------------------- */
+  --trilho-largura:  15.5rem;
+  --trilho-recolhido: 4.25rem;
+  --topo-altura:     3.75rem;
+  --barra-inferior:  4rem;      /* navegação inferior no mobile          */
+  /* O conteúdo do painel NÃO tem largura máxima: ele vai da borda interna do
+     trilho até a borda direita da área útil, menos o respiro lateral. Em telas
+     muito largas, quem precisa encurtar (texto corrido, formulário) limita a
+     SI MESMO — a página inteira nunca vira uma coluna estreita no meio. */
+  --respiro-lateral: clamp(1rem, 0.6rem + 1.4vw, 2.5rem);
+
+  /* -- Formas: cantos discretos. A curva da marca é o ARCO --------------- */
+  --r-1: 3px;   --r-2: 5px;   --r-3: 8px;   --r-4: 12px;   --r-pill: 999px;
+
+  /* -- Altura de CONTROLE -----------------------------------------------
+     Um só número manda em botão, campo, busca e chip. Antes o chip tinha
+     30px e o campo 38px, e era isso que desalinhava o "De/Até" da linha
+     dos períodos — não era o alinhamento, era a altura. */
+  --controle-alt: 2.375rem;
+
+  /* -- Sombra: o mínimo para separar planos ------------------------------ */
+  --sombra-1: 0 1px 2px rgba(42, 21, 28, 0.06);
+  --sombra-2: 0 2px 6px -1px rgba(42, 21, 28, 0.08), 0 1px 2px rgba(42, 21, 28, 0.04);
+  --sombra-3: 0 16px 40px -18px rgba(42, 21, 28, 0.30);
+  --sombra-4: 0 28px 70px -24px rgba(42, 21, 28, 0.44);
+
+  /* -- Movimento: curto, funcional ---------------------------------------
+     A faixa útil aqui é 160–280ms. Abaixo disso a transição não chega a ser
+     lida como transição: o elemento pisca. Acima, a tela parece pesada —
+     e entrada de painel é o caso em que isso mais incomoda, porque acontece
+     toda vez que a cliente toca num cartão.
+
+     Por isso --d1 saiu de 120ms e --d3 de 320ms. O --d1 é o degrau de
+     RESPOSTA (aperto do botão, hover de linha): se ele durasse os 200ms do
+     --d2, o controle pareceria não responder na hora em que o dedo toca.
+     Ele é o mais curto da faixa, não o mais curto possível. O --d3 é o
+     degrau que CARREGA alguma coisa (gaveta, toast, troca de tela): 280ms é
+     o teto do briefing e é onde ele para.                                 */
+  --saida:  cubic-bezier(0.16, 1, 0.3, 1);
+  --suave:  cubic-bezier(0.4, 0, 0.2, 1);
+  --d1: 0.16s;   --d2: 0.2s;   --d3: 0.28s;
+
+  /* -- Camadas ------------------------------------------------------------ */
+  --z-conteudo: 1;
+  --z-grudado:  15;
+  --z-trilho:   40;
+  --z-topo:     50;
+  --z-veu:      60;
+  --z-gaveta:   70;
+  --z-modal:    80;
+  --z-toast:    90;
+
+  color-scheme: light;
+}
+
+/* Tema escuro do painel: usado no TRILHO e nas telas de entrada.
+   Não é um modo alternativo do conteúdo — é identidade. */
+.tema-trilho {
+  --superficie:     #3A1D26;
+  --superficie-alt: #331821;
+  --texto:          #F6EEF0;
+  --texto-2:        #CDAEB6;
+  --texto-3:        #AC8993;
+  --linha:          rgba(255, 255, 255, 0.10);
+  --linha-2:        rgba(255, 255, 255, 0.16);
+  --linha-forte:    rgba(255, 255, 255, 0.34);
+  --acento:         var(--rosa-claro);
+  --acento-texto:   #DEB4BD;
+  color-scheme: dark;
+}
+
+/* --------------------------------------------------------------------------
+   2. RESET
+   -------------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  scroll-padding-top: calc(var(--topo-altura) + var(--e4));
+}
+
+body {
+  min-height: 100%;
+  background: var(--marfim);
+  color: var(--texto);
+  font-family: var(--fonte-texto);
+  font-size: var(--t-15);
+  font-weight: 400;
+  line-height: var(--alt-texto);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* clip (não hidden) preserva position: sticky do cabeçalho e do trilho */
+  overflow-x: clip;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior-y: none;
+}
+
+img, video { display: block; max-width: 100%; }
+/* SVG de ícone tem tamanho próprio — por isso NÃO entra no `max-width: 100%`
+   acima: com viewBox e sem width, o ícone estica até a largura do container.
+   Os ícones já nascem com width/height (icones.js); esta regra é a rede de
+   segurança para qualquer <svg> avulso que apareça sem tamanho declarado.
+   Usa :not([width]) para não sobrepor o tamanho que o atributo define. */
+svg { display: block; flex: none; }
+svg:not([width]) { width: 1.25rem; height: 1.25rem; }
+/* O <picture> nunca gera caixa própria — lição do site: com ele no meio,
+   seletor de filho direto sobre <img> para de casar e a imagem perde
+   object-fit. Por isso os alvos de imagem daqui são escritos como
+   DESCENDENTES (.classe img), nunca como filhos diretos. */
+picture { display: contents; }
+
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { background: none; border: 0; cursor: pointer; text-align: inherit; }
+ul, ol { list-style: none; }
+table { border-collapse: collapse; border-spacing: 0; width: 100%; }
+svg { flex: none; }
+
+/* Foco visível: só para quem navega por teclado, e sempre evidente. */
+:focus-visible {
+  outline: 2px solid var(--acento-texto);
+  outline-offset: 2px;
+  border-radius: var(--r-1);
+}
+:focus:not(:focus-visible) { outline: none; }
+
+::selection { background: var(--rosa-claro); color: var(--vinho-3); }
+
+/* Alvo de toque mínimo confortável em telas sensíveis ao toque. */
+@media (pointer: coarse) {
+  button, a, [role="button"], select, input[type="checkbox"] { min-height: 2.5rem; }
+}
+
+.escondido { display: none !important; }
+.so-leitor {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.pular-link {
+  position: fixed; top: var(--e3); left: var(--e3); z-index: 200;
+  transform: translateY(-160%);
+  background: var(--vinho-3); color: #fff;
+  padding: var(--e3) var(--e4); border-radius: var(--r-2);
+  font-size: var(--t-14);
+  transition: transform var(--d2) var(--saida);
+}
+.pular-link:focus { transform: translateY(0); }
+
+/* --------------------------------------------------------------------------
+   3. TIPOGRAFIA
+   -------------------------------------------------------------------------- */
+h1, h2, h3, h4 { font-weight: 400; color: var(--tinta); line-height: var(--alt-junta); }
+
+/* Título de tela — a única aparição grande da serifa no conteúdo. */
+.titulo-tela {
+  font-family: var(--fonte-titulo);
+  font-size: var(--t-26);
+  letter-spacing: -0.005em;
+}
+.titulo-secao { font-size: var(--t-16); font-weight: 500; color: var(--texto); }
+.titulo-bloco { font-size: var(--t-14); font-weight: 500; color: var(--texto); }
+
+/* Rótulo caixa-alta: usado com parcimônia, sempre acima de um valor. */
+.rotulo {
+  display: block;
+  font-size: var(--t-11);
+  font-weight: 500;
+  letter-spacing: var(--rotulo-esp);
+  text-transform: uppercase;
+  color: var(--texto-3);
+  line-height: 1.4;
+}
+.subtexto { font-size: var(--t-13); color: var(--texto-2); line-height: var(--alt-solta); }
+.miudo     { font-size: var(--t-12); color: var(--texto-3); }
+.forte     { font-weight: 500; color: var(--texto); }
+
+/* Números: sempre tabulares onde coluna importa. */
+.num, .tabular { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+.num-grande {
+  font-family: var(--fonte-titulo);
+  font-size: var(--t-32);
+  line-height: 1;
+  color: var(--tinta);
+  font-variant-numeric: tabular-nums;
+}
+.valor-negativo { color: var(--ausente-texto); }
+.traco { color: var(--texto-3); }
+
+/* --------------------------------------------------------------------------
+   4. PRIMITIVOS — botões
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--e2);
+  height: var(--controle-alt); padding: 0 var(--e4);
+  border-radius: var(--r-2);
+  border: 1px solid transparent;
+  font-size: var(--t-14); font-weight: 500; letter-spacing: 0.005em;
+  white-space: nowrap; cursor: pointer; user-select: none;
+  transition: background var(--d2) var(--suave), border-color var(--d2) var(--suave),
+              color var(--d2) var(--suave), transform var(--d1) var(--suave),
+              box-shadow var(--d2) var(--suave);
+}
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: 0.48; cursor: not-allowed; }
+.btn svg { width: 1rem; height: 1rem; }
+
+/* Principal: vinho sólido. É a cor da casa em ação. */
+.btn--principal { background: var(--vinho-2); color: #FBF7F6; box-shadow: var(--sombra-1); }
+.btn--principal:hover:not(:disabled) { background: var(--vinho-3); }
+
+/* Secundário: branco com traço. O botão mais usado do painel. */
+.btn--secundario { background: var(--branco); color: var(--texto); border-color: var(--linha-2); box-shadow: var(--sombra-1); }
+.btn--secundario:hover:not(:disabled) { border-color: var(--linha-forte); background: var(--superficie-alt); }
+
+/* Fantasma: para ações dentro de linhas e barras. */
+.btn--fantasma { color: var(--texto-2); }
+.btn--fantasma:hover:not(:disabled) { background: rgba(63, 30, 40, 0.055); color: var(--texto); }
+
+/* Acento: rosa da marca. Rareado de propósito — só na ação que vende. */
+.btn--acento { background: var(--rosa); color: #fff; box-shadow: var(--sombra-1); }
+.btn--acento:hover:not(:disabled) { background: #A06672; }
+
+.btn--perigo { background: var(--branco); color: var(--ausente-texto); border-color: rgba(138, 74, 56, 0.34); }
+.btn--perigo:hover:not(:disabled) { background: #F5E9E6; border-color: rgba(138, 74, 56, 0.5); }
+
+.btn--pequeno { height: 1.9375rem; padding: 0 var(--e3); font-size: var(--t-13); }
+.btn--pequeno svg { width: 0.875rem; height: 0.875rem; }
+.btn--grande  { height: 2.875rem; padding: 0 var(--e6); font-size: var(--t-15); }
+.btn--bloco   { width: 100%; }
+.btn--so-icone { width: 2.375rem; padding: 0; }
+.btn--so-icone.btn--pequeno { width: 1.9375rem; }
+
+/* Botão de ícone sobre superfície: alvo do cabeçalho e das linhas. */
+.btn-icone {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.125rem; height: 2.125rem; border-radius: var(--r-2);
+  color: var(--texto-2); position: relative;
+  transition: background var(--d2) var(--suave), color var(--d2) var(--suave);
+}
+.btn-icone:hover { background: rgba(63, 30, 40, 0.06); color: var(--texto); }
+.btn-icone svg { width: 1.125rem; height: 1.125rem; }
+.btn-icone[aria-expanded="true"] { background: rgba(63, 30, 40, 0.08); color: var(--texto); }
+
+/* Contador de pendências sobre o ícone */
+.btn-icone__ponto {
+  position: absolute; top: 0.3rem; right: 0.3rem;
+  width: 0.5rem; height: 0.5rem; border-radius: 50%;
+  background: var(--rosa); box-shadow: 0 0 0 2px var(--branco);
+}
+
+/* Botão de texto sublinhado, para ações terciárias em linhas. */
+.btn-texto {
+  font-size: var(--t-13); font-weight: 500; color: var(--acento-texto);
+  padding: var(--e1) 0; border-bottom: 1px solid transparent;
+  transition: border-color var(--d2) var(--suave);
+}
+.btn-texto:hover { border-bottom-color: currentColor; }
+
+/* --------------------------------------------------------------------------
+   5. PRIMITIVOS — campos
+   -------------------------------------------------------------------------- */
+.campo { display: flex; flex-direction: column; gap: var(--e2); min-width: 0; }
+.campo__rotulo {
+  font-size: var(--t-12); font-weight: 500; color: var(--texto-2);
+  letter-spacing: 0.01em;
+}
+.campo__dica { font-size: var(--t-12); color: var(--texto-3); }
+.campo__erro { font-size: var(--t-12); color: var(--ausente-texto); display: none; }
+.campo[data-invalido] .campo__erro { display: block; }
+.campo[data-invalido] .entrada { border-color: rgba(138, 74, 56, 0.62); }
+
+.entrada, .selecao, .area {
+  width: 100%;
+  height: var(--controle-alt);
+  padding: 0 var(--e3);
+  background: var(--branco);
+  border: 1px solid var(--linha-2);
+  border-radius: var(--r-2);
+  font-size: var(--t-14);
+  color: var(--texto);
+  transition: border-color var(--d2) var(--suave), box-shadow var(--d2) var(--suave), background var(--d2) var(--suave);
+  appearance: none;
+}
+.entrada::placeholder, .area::placeholder { color: #A08E95; }
+.entrada:hover, .selecao:hover, .area:hover { border-color: var(--linha-forte); }
+.entrada:focus, .selecao:focus, .area:focus {
+  outline: none;
+  border-color: var(--acento);
+  box-shadow: 0 0 0 3px rgba(177, 117, 129, 0.16);
+}
+.entrada:disabled, .selecao:disabled, .area:disabled { background: var(--marfim-2); color: var(--texto-3); cursor: not-allowed; }
+
+.area { height: auto; min-height: 5.5rem; padding: var(--e3); line-height: var(--alt-texto); resize: vertical; }
+
+/* Seta do select desenhada em SVG embutido — sem imagem externa. */
+.selecao {
+  padding-right: 2.25rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%236E5460' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4.5 6 7.5 9 4.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 0.75rem;
+}
+
+/* Campo de busca com lupa embutida. A lupa tem 16px e vive DENTRO do campo —
+   nunca solta ao lado, nunca maior que o próprio controle. */
+.busca { position: relative; display: flex; align-items: center; min-width: 0; }
+.busca svg {
+  position: absolute; left: var(--e3); width: 1rem; height: 1rem;
+  color: var(--texto-3); pointer-events: none;
+}
+.busca .entrada { height: var(--controle-alt); padding-left: 2.25rem; }
+.busca__limpar {
+  position: absolute; right: var(--e2);
+  width: 1.5rem; height: 1.5rem; border-radius: var(--r-1);
+  display: none; align-items: center; justify-content: center;
+  color: var(--texto-3);
+}
+.busca__limpar:hover { background: rgba(63, 30, 40, 0.07); color: var(--texto); }
+.busca__limpar svg { position: static; width: 0.8125rem; height: 0.8125rem; }
+.busca[data-preenchido] .busca__limpar { display: flex; }
+
+/* Busca compacta: existe para dividir a MESMA linha com o botão de filtros.
+   Em vez de espremer, ela abre mão do atalho do topo — o rótulo do topo
+   continua dizendo "Buscar", então nada se perde. */
+@media (min-width: 60rem) {
+  .busca[data-tamanho="compacta"] { max-width: 17rem; }
+}
+
+/* Interruptor — usado em configurações e disponibilidade online */
+.interruptor { display: inline-flex; align-items: center; gap: var(--e3); cursor: pointer; }
+.interruptor input { position: absolute; opacity: 0; width: 0; height: 0; }
+.interruptor__trilho {
+  position: relative; flex: none;
+  width: 2.25rem; height: 1.25rem; border-radius: var(--r-pill);
+  background: #D6C8CB;
+  transition: background var(--d2) var(--suave);
+}
+.interruptor__trilho::after {
+  content: ""; position: absolute; top: 0.15625rem; left: 0.15625rem;
+  width: 0.9375rem; height: 0.9375rem; border-radius: 50%;
+  background: #fff; box-shadow: var(--sombra-1);
+  transition: transform var(--d2) var(--saida);
+}
+.interruptor input:checked + .interruptor__trilho { background: var(--rosa); }
+.interruptor input:checked + .interruptor__trilho::after { transform: translateX(1rem); }
+.interruptor input:focus-visible + .interruptor__trilho { outline: 2px solid var(--acento-texto); outline-offset: 2px; }
+.interruptor input:disabled + .interruptor__trilho { opacity: 0.5; cursor: not-allowed; }
+.interruptor__texto { font-size: var(--t-14); color: var(--texto); }
+
+/* Caixa de seleção — para listas de configuração */
+.caixa { display: inline-flex; align-items: center; gap: var(--e2); cursor: pointer; font-size: var(--t-14); }
+.caixa input {
+  appearance: none; flex: none;
+  width: 1.0625rem; height: 1.0625rem; border-radius: var(--r-1);
+  border: 1px solid var(--linha-forte); background: var(--branco);
+  display: grid; place-content: center;
+  transition: background var(--d2) var(--suave), border-color var(--d2) var(--suave);
+}
+.caixa input::after {
+  content: ""; width: 0.5rem; height: 0.3125rem;
+  border-left: 1.6px solid #fff; border-bottom: 1.6px solid #fff;
+  transform: rotate(-45deg) scale(0); transition: transform var(--d2) var(--saida);
+  margin-top: -0.12rem;
+}
+.caixa input:checked { background: var(--rosa); border-color: var(--rosa); }
+.caixa input:checked::after { transform: rotate(-45deg) scale(1); }
+.caixa input:focus-visible { outline: 2px solid var(--acento-texto); outline-offset: 2px; }
+
+/* --------------------------------------------------------------------------
+   6. PRIMITIVOS — superfícies
+   -------------------------------------------------------------------------- */
+.cartao {
+  background: var(--superficie);
+  border: 1px solid var(--linha);
+  border-radius: var(--r-3);
+  box-shadow: var(--sombra-1);
+}
+.cartao__topo {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--e4);
+  padding: var(--e4) var(--e5);
+  border-bottom: 1px solid var(--linha);
+  min-height: 3.25rem;
+}
+.cartao__topo h2, .cartao__topo h3 { font-size: var(--t-15); font-weight: 500; color: var(--texto); }
+.cartao__corpo { padding: var(--e5); }
+.cartao__corpo--justo { padding: 0; }
+.cartao__rodape {
+  padding: var(--e3) var(--e5);
+  border-top: 1px solid var(--linha);
+  background: var(--superficie-alt);
+  border-radius: 0 0 var(--r-3) var(--r-3);
+}
+
+.divisor { height: 1px; background: var(--linha); border: 0; }
+
+/* --------------------------------------------------------------------------
+   7. PRIMITIVOS — selos de estado
+   Sete estados de agendamento, cada um com fundo e texto dentro da paleta
+   da marca. O fundo é sempre claro e o texto escuro: nada de selo berrante.
+   -------------------------------------------------------------------------- */
+.selo {
+  display: inline-flex; align-items: center; gap: 0.375rem;
+  height: 1.375rem; padding: 0 0.5rem;
+  border-radius: var(--r-1);
+  font-size: var(--t-11); font-weight: 500;
+  letter-spacing: 0.045em; text-transform: uppercase;
+  white-space: nowrap;
+}
+.selo::before {
+  content: ""; width: 0.3125rem; height: 0.3125rem; border-radius: 50%;
+  background: currentColor; opacity: 0.85;
+}
+.selo--novo         { background: var(--novo-fundo);         color: var(--novo-texto); }
+.selo--pendente     { background: var(--pendente-fundo);     color: var(--pendente-texto); }
+.selo--confirmado   { background: var(--confirmado-fundo);   color: var(--confirmado-texto); }
+.selo--atendimento  { background: var(--atendimento-fundo);  color: var(--atendimento-texto); }
+.selo--concluido    { background: var(--concluido-fundo);    color: var(--concluido-texto); }
+.selo--cancelado    { background: var(--cancelado-fundo);    color: var(--cancelado-texto); }
+.selo--ausente      { background: var(--ausente-fundo);      color: var(--ausente-texto); }
+
+.selo--cancelado::before { background: none; box-shadow: inset 0 0 0 1px currentColor; }
+
+/* Etiqueta de origem: SITE × MANUAL — o elo entre site e sistema. */
+.origem {
+  display: inline-flex; align-items: center; gap: 0.3125rem;
+  height: 1.25rem; padding: 0 0.4375rem;
+  border: 1px solid var(--linha-2); border-radius: var(--r-1);
+  background: var(--branco);
+  font-size: var(--t-11); font-weight: 500; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--texto-2);
+}
+.origem svg { width: 0.6875rem; height: 0.6875rem; }
+.origem--site { border-color: rgba(177, 117, 129, 0.4); color: var(--acento-texto); background: var(--rosa-lavado); }
+.origem--manual { border-color: var(--linha-2); color: var(--texto-3); }
+
+/* Contador numérico pequeno (ex.: nº de novas notificações) */
+.contador {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.125rem; height: 1.125rem; padding: 0 0.3125rem;
+  border-radius: var(--r-pill);
+  background: var(--rosa); color: #fff;
+  font-size: var(--t-11); font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   8. PRIMITIVOS — avatar
+   Iniciais em círculo com matiz derivado do nome. Nenhuma foto de pessoa
+   real entra no sistema: são clientes demonstrativos.
+   -------------------------------------------------------------------------- */
+.avatar {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.125rem; height: 2.125rem; flex: none;
+  border-radius: 50%;
+  background: var(--rosa-lavado); color: var(--acento-texto);
+  font-size: var(--t-12); font-weight: 500; letter-spacing: 0.02em;
+  text-transform: uppercase; user-select: none;
+}
+.avatar--g { width: 2.75rem; height: 2.75rem; font-size: var(--t-14); }
+.avatar--p { width: 1.625rem; height: 1.625rem; font-size: var(--t-11); }
+.avatar--x { width: 3.5rem; height: 3.5rem; font-size: var(--t-18); }
+/* Variações de matiz — todas dentro da família da marca */
+.avatar[data-matiz="1"] { background: #E8DCD2; color: #7A5A3C; }
+.avatar[data-matiz="2"] { background: #EAF0E6; color: #3C5A32; }
+.avatar[data-matiz="3"] { background: #F6EFE3; color: #7A5A26; }
+.avatar[data-matiz="4"] { background: #F2E6EA; color: #5C2B38; }
+.avatar[data-matiz="5"] { background: #EDE7F0; color: #5A4670; }
+
+/* --------------------------------------------------------------------------
+   9. PRIMITIVOS — estado vazio e esqueleto
+   -------------------------------------------------------------------------- */
+.vazio {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--e3); padding: var(--e8) var(--e5);
+  text-align: center; color: var(--texto-2);
+}
+.vazio__marca {
+  width: 2.75rem; height: 2.75rem; border-radius: 50%;
+  display: grid; place-content: center;
+  background: var(--marfim-2); color: var(--texto-3);
+  border: 1px dashed var(--linha-2);
+}
+.vazio__marca svg { width: 1.25rem; height: 1.25rem; }
+.vazio__titulo { font-size: var(--t-14); font-weight: 500; color: var(--texto); }
+.vazio__texto { font-size: var(--t-13); max-width: 34ch; line-height: var(--alt-solta); }
+.vazio--compacto { padding: var(--e6) var(--e4); gap: var(--e2); }
+
+/* Esqueleto de carregamento — usado só onde a espera é real e curta */
+.esqueleto {
+  position: relative; overflow: hidden;
+  background: var(--marfim-2); border-radius: var(--r-1);
+}
+.esqueleto::after {
+  content: ""; position: absolute; inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.72), transparent);
+  animation: esq-onda 1.25s var(--suave) infinite;
+}
+@keyframes esq-onda { to { transform: translateX(100%); } }
+.esqueleto--linha { height: 0.75rem; margin-bottom: var(--e2); }
+.esqueleto--linha:last-child { margin-bottom: 0; width: 62%; }
+
+/* --------------------------------------------------------------------------
+   10. AVISO DE DADO DEMONSTRATIVO
+   Faixa permanente nas telas que mostram números inventados. Não é decoração:
+   é o que impede a cliente de ler faturamento fictício como real.
+   -------------------------------------------------------------------------- */
+.aviso-demo {
+  display: flex; align-items: flex-start; gap: var(--e3);
+  padding: var(--e3) var(--e4);
+  background: var(--demo-fundo);
+  border: 1px solid var(--demo-linha);
+  border-radius: var(--r-2);
+  color: var(--demo-texto);
+  font-size: var(--t-12);
+  line-height: var(--alt-texto);
+}
+.aviso-demo svg { width: 1rem; height: 1rem; flex: none; margin-top: 0.1rem; }
+.aviso-demo b { font-weight: 500; }
+.aviso-demo--linha { display: inline-flex; align-items: center; padding: var(--e1) var(--e2); border-radius: var(--r-1); }
+
+/* Marca de exemplo junto a um valor isolado */
+.marca-demo {
+  font-size: var(--t-11); font-weight: 500; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--demo-texto); opacity: 0.85;
+}
+
+/* --------------------------------------------------------------------------
+   11. ACESSIBILIDADE DE MOVIMENTO
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
