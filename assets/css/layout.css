@@ -99,12 +99,17 @@
 .trilho__logo { width: 2.25rem; height: 2.25rem; flex: none; object-fit: contain; }
 .trilho__nome {
   font-family: var(--fonte-titulo);
-  font-size: var(--t-16); line-height: 1.15; color: #FBF5F6;
+  font-size: var(--t-16); line-height: 1.15; color: #FFFFFF;
   white-space: nowrap; overflow: hidden;
 }
+/* Ele NÃO é um subtítulo do nome do salão: é um rótulo da mesma família de
+   "Operação" e "Gestão", e é assim que ele passa a parecer. Com
+   `--acento-texto` (o rosa claro de 8,0:1 do tema do trilho) era o texto
+   MAIS colorido do menu — mais que os próprios itens de navegação, que não
+   têm cor nenhuma. O mais colorido do menu era o que menos importava. */
 .trilho__papel {
   font-size: var(--t-11); letter-spacing: var(--rotulo-esp); text-transform: uppercase;
-  color: var(--acento-texto);
+  color: var(--texto-3);
 }
 
 .trilho__lista { flex: 1; overflow-y: auto; padding: var(--e3) var(--e3) var(--e5); overscroll-behavior: contain; }
@@ -124,26 +129,35 @@
   font-size: var(--t-14);
   transition: background var(--d2) var(--suave), color var(--d2) var(--suave);
 }
-.item-trilho:hover { background: rgba(255, 255, 255, 0.06); color: #FBF5F6; }
-.item-trilho svg { width: 1.125rem; height: 1.125rem; flex: none; }
+.item-trilho:hover { background: rgba(255, 255, 255, 0.06); color: #FFFFFF; }
+/* 18px num item de 38px de altura é 47% dele. O ícone é APOIO ao nome, não o
+   nome — e 17px é o mesmo tamanho que o rótulo de grupo e o selo da linha de
+   cartão já usam. O item fica com escala de menu em vez de lista de ícones. */
+.item-trilho svg { width: 1.0625rem; height: 1.0625rem; flex: none; }
 .item-trilho__texto { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .item-trilho__contador {
   margin-left: auto; flex: none;
-  background: var(--rosa); color: #fff;
+  /* Rosa claro com texto escuro, não rosa cheio com texto branco: sobre o
+     trilho escuro o par claro/escuro é o que o tema já usa, e mede 7,9:1. */
+  background: var(--rosa-claro); color: var(--vinho-3);
   font-size: var(--t-11); font-weight: 500; font-variant-numeric: tabular-nums;
   min-width: 1.125rem; height: 1.125rem; padding: 0 0.3125rem;
   display: inline-flex; align-items: center; justify-content: center;
   border-radius: var(--r-pill);
 }
 
-/* Ativo: barra rosa à esquerda + fundo tingido. É como a cliente sabe onde está. */
+/* Ativo: barra rosa à esquerda + fundo tingido. É como a dona sabe onde está.
+   Este é o ponto de orientação mais importante do painel, então ele é o
+   primeiro a usar o rosa: barra cheia de 3px (era 2px), fundo rosado e o
+   ícone na cor da marca. */
 .item-trilho[aria-current="page"] {
-  background: rgba(222, 180, 189, 0.14);
+  background: var(--rosa-claro-veu);
   color: #FFFFFF;
 }
 .item-trilho[aria-current="page"]::before {
-  content: ""; position: absolute; left: 0; top: 0.4375rem; bottom: 0.4375rem;
-  width: 2px; border-radius: 0 var(--r-pill) var(--r-pill) 0;
+  content: ""; position: absolute; inset-inline-start: 0;
+  top: 0.4375rem; bottom: 0.4375rem;
+  width: 3px; border-radius: 0 var(--r-pill) var(--r-pill) 0;
   background: var(--rosa-claro);
 }
 .item-trilho[aria-current="page"] svg { color: var(--rosa-claro); }
@@ -172,7 +186,7 @@
   display: flex; align-items: center; gap: var(--e3);
   min-height: var(--topo-altura);
   padding: var(--e2) var(--respiro-lateral);
-  background: rgba(250, 247, 244, 0.88);
+  background: var(--cromo);
   backdrop-filter: blur(12px) saturate(1.4);
   -webkit-backdrop-filter: blur(12px) saturate(1.4);
   border-bottom: 1px solid var(--linha);
@@ -190,7 +204,7 @@
   border-radius: var(--r-pill);
   transition: background var(--d2) var(--suave);
 }
-.topo__usuario:hover { background: rgba(63, 30, 40, 0.06); }
+.topo__usuario:hover { background: var(--veu-claro); }
 .topo__usuario-nome { font-size: var(--t-13); color: var(--texto); white-space: nowrap; }
 
 /* --------------------------------------------------------------------------
@@ -235,7 +249,14 @@
   background: var(--superficie-alt);
   padding-bottom: max(var(--e4), env(safe-area-inset-bottom));
 }
-.gaveta__rodape .btn { flex: 1 1 auto; }
+/* Só a AÇÃO PRINCIPAL estica. Antes todos os botões levavam `flex: 1 1 auto`
+   e ficavam com a mesma largura — era o motivo estrutural de "Cancelar"
+   competir de igual para igual com a ação que resolve o atendimento. As
+   secundárias agora têm a largura do próprio rótulo, e o perigo vai para a
+   ponta esquerda, como já acontecia no rodapé do modal. */
+.gaveta__rodape .btn--principal { flex: 1 1 auto; }
+.gaveta__rodape .btn--perigo,
+.gaveta__rodape .btn--empurrar { margin-right: auto; }
 
 /* Gaveta de filtros: menor, para não engolir a tela no celular */
 .gaveta--filtros { width: min(24rem, 100%); }
@@ -290,8 +311,10 @@
 .toast {
   display: flex; align-items: flex-start; gap: var(--e3);
   padding: var(--e3) var(--e4);
-  background: var(--vinho-3);
-  color: #F7EFF1;
+  /* Rosa profundo da casa em vez do quase preto: mesma leitura de "recado
+     do sistema", sem trazer o preto de volta para dentro da tela. */
+  background: var(--rosa-forte);
+  color: #FFFFFF;
   border-radius: var(--r-3);
   box-shadow: var(--sombra-3);
   font-size: var(--t-14);
@@ -307,13 +330,13 @@
 .toast--alerta  .toast__icone { color: #E6B884; }
 .toast--erro    .toast__icone { color: #E39A8A; }
 .toast__texto { flex: 1; line-height: var(--alt-texto); }
-.toast__texto b { font-weight: 500; color: #fff; }
+.toast__texto b { font-weight: 500; color: #FFFFFF; }
 .toast__acao {
   flex: none; font-size: var(--t-13); font-weight: 500; color: var(--rosa-claro);
   border-bottom: 1px solid transparent;
 }
 .toast__acao:hover { border-bottom-color: currentColor; }
-.toast__fechar { flex: none; color: rgba(255, 255, 255, 0.62); margin: -0.25rem -0.35rem 0 0; }
+.toast__fechar { flex: none; color: rgba(255, 255, 255, 0.78); margin: -0.25rem -0.35rem 0 0; }
 .toast__fechar:hover { color: #fff; }
 
 /* --------------------------------------------------------------------------
@@ -444,7 +467,7 @@
 .chip svg { width: 0.875rem; height: 0.875rem; flex: none; }
 .chip:hover { border-color: var(--linha-forte); background: var(--superficie-alt); color: var(--texto); }
 .chip[aria-pressed="true"] {
-  background: var(--rosa-lavado); border-color: rgba(177, 117, 129, 0.44);
+  background: var(--rosa-lavado); border-color: var(--acento-borda);
   color: var(--acento-texto);
 }
 .chip__x { display: inline-flex; opacity: 0.6; }
@@ -491,7 +514,7 @@
 .linha-principal { display: flex; align-items: center; gap: var(--e3); min-width: 0; }
 .linha-principal__texto { min-width: 0; }
 .linha-principal__nome { font-weight: 500; color: var(--texto); }
-.linha-principal__sub { font-size: var(--t-12); color: var(--texto-3); }
+.linha-principal__sub { font-size: var(--t-12); color: var(--texto-2); }
 .truncar { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 @media (max-width: 40rem) {
@@ -541,20 +564,36 @@
               transform var(--d2) var(--suave), background var(--d2) var(--suave);
 }
 .linha-cartao--clicavel { cursor: pointer; }
-/* Microinteração discreta: sobe 2px, muda a borda para o vinho da casa e
-   abre a sombra um degrau. Sem brilho, sem 3D. */
+/* Microinteração discreta: sobe 2px, muda a borda para o rosa profundo da
+   casa e abre a sombra um degrau. Sem brilho, sem 3D. */
 .linha-cartao--clicavel:hover {
-  border-color: rgba(126, 53, 70, 0.38);
+  border-color: var(--borda-viva);
   box-shadow: var(--sombra-2);
   transform: translateY(-2px);
 }
 .linha-cartao--clicavel:active { transform: translateY(0); box-shadow: var(--sombra-1); }
 .linha-cartao__corpo { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.15rem; }
+/* Na linha da lista o rodapé direito tem três pesos diferentes, para a leitura
+   em um segundo: a SITUAÇÃO (selo), o PAGAMENTO (apoio, sem fundo cheio) e a
+   ORIGEM (fita de papel, atrás de todos). Antes os três pesavam igual e o que
+   dizia "chegou do site" competia com o que dizia "cancelado". */
 .linha-cartao__fim { display: flex; align-items: center; gap: var(--e2); flex: none; }
+.linha-cartao__fim .selo-pag {
+  background: none; padding: 0; color: var(--texto-2);
+  font-weight: 400; letter-spacing: 0.03em;
+}
+.linha-cartao__fim .origem {
+  height: auto; padding: 0; border: 0; background: none;
+  font-size: var(--t-11); font-weight: 500; letter-spacing: 0.05em;
+  color: var(--texto-3);
+}
 /* A hora é a âncora visual da linha: sempre com a mesma largura, para as
-   horas ficarem alinhadas em coluna mesmo com nomes de tamanhos diferentes. */
+   horas ficarem alinhadas em coluna mesmo com nomes de tamanhos diferentes.
+   6rem (96px) era folga demais: "09:00–09:30" mede 66px até na Verdana, a
+   mais larga das fontes de sistema. Os 30px que sobravam eram um vão morto
+   no meio de TODA linha, nas cinco telas que usam este componente. */
 .linha-cartao__hora {
-  flex: none; width: 6rem;
+  flex: none; width: 5.25rem;
   font-size: var(--t-14); font-weight: 500; color: var(--texto);
   font-variant-numeric: tabular-nums;
 }
@@ -563,7 +602,20 @@
 @media (max-width: 30rem) {
   .linha-cartao { flex-wrap: wrap; gap: var(--e3); }
   .linha-cartao__hora { width: auto; }
-  .linha-cartao__fim { width: 100%; justify-content: flex-start; padding-left: calc(2.125rem + var(--e3)); }
+  /* O rodapé desce para a própria linha. O recuo de 34px não correspondia a
+     nada: a hora tem largura `auto` abaixo de 30rem, então o avatar (e o
+     nome) começam bem depois dela, e os selos ficavam desalinhados dos dois.
+     Sem recuo eles encostam na mesma borda esquerda da hora — a linha dois
+     continua a linha um em vez de fingir uma coluna que não existe. */
+  .linha-cartao__fim { width: 100%; justify-content: flex-start; }
+}
+
+/* Os quatro selos do rodapé do cartão em linha somam ~384px com os textos
+   reais do núcleo (medido em `medir-rodape-cartao.js`). Sem quebra, o cartão
+   ganhava rolagem horizontal abaixo de ~510px de janela. A partir daqui eles
+   podem cair para uma segunda linha em vez de estourar o cartão. */
+@media (max-width: 34rem) {
+  .linha-cartao__fim { flex-wrap: wrap; row-gap: var(--e2); }
 }
 
 /* --------------------------------------------------------------------------
@@ -574,9 +626,44 @@
 .grade--3 { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
 .grade--4 { grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); }
 .grade--metricas { grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); }
+/* Cinco métricas em uma linha — o único grid do painel que não fecha sozinho.
+   A prova está em `provar-impossivel.js`: 5 cartões deixam 1 sobrando tanto em
+   4 colunas quanto em 2, e NENHUM `minmax` único resolve, porque a mesma grade
+   passa por um estado de 4 e um de 2 colunas. Então aqui a contagem de colunas
+   é fixada, sem o degrau de 3 (onde sobrariam dois):
+     1 coluna  →  lista                    (até 30rem)
+     2 colunas →  2 + 2 + 1               (30rem–64rem)
+     4 colunas →  4 + 1                   (64rem–83rem)
+     5 colunas →  5 numa fileira só       (83rem em diante)
+   Enquanto a fileira não fecha, o quinto cartão toma a largura toda em vez de
+   sobrar sozinho na primeira coluna — ele passa a ser o resumo do período. A
+   partir de 83rem as cinco cabem lado a lado (cada uma ainda acima dos 12rem
+   mínimos do resto do painel) e aí a quinta volta a ser uma coluna comum.
+   Nenhuma métrica foi removida; nenhuma foi acrescentada. */
+.grade--metricas--5 { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 30rem) {
+  .grade--metricas--5 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grade--metricas--5 > .metrica:last-child { grid-column: 1 / -1; }
+}
+@media (min-width: 64rem) {
+  .grade--metricas--5 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (min-width: 83rem) {
+  .grade--metricas--5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .grade--metricas--5 > .metrica:last-child { grid-column: auto; }
+}
 /* Grades de painel: 2 colunas em tela larga, 1 coluna em tela estreita.
    É o que transforma uma lista vertical interminável em painel de leitura. */
-.grade--painel { grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr)); }
+/* `minmax(22rem, 1fr)` cria uma faixa de 352px MESMO quando o contêiner é
+   menor — e `body { overflow-x: clip }` corta o excesso em silêncio: não
+   rola, some. A 360px o painel deixa 336px de conteúdo (abaixo de 26rem a
+   régua cai para `--e3`, 12px de cada lado) e os 16px que faltavam eram
+   simplesmente CORTADOS — nas quatro telas que usam esta grade: Visão
+   geral, Financeiro, Relatórios e Equipe.
+   `min(22rem, 100%)` devolve os mesmos 352px no desktop (as duas colunas
+   continuam idênticas) e faz a faixa encolher até caber no celular. É o
+   cuidado que o `.grade--metricas--5` já tem, lá com pontos de quebra. */
+.grade--painel { grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr)); }
 /* Quando o painel ocupa a largura toda, o miolo de texto fica legível sem
    esticar a linha até ficar difícil de acompanhar. */
 .grade--painel > .bloco { min-width: 0; }
@@ -606,7 +693,7 @@
 .metrica__delta--sobe { color: var(--confirmado-texto); }
 .metrica__delta--desce { color: var(--ausente-texto); }
 .metrica__delta--neutro { color: var(--texto-3); }
-.metrica--destaque { border-color: rgba(177, 117, 129, 0.36); background: linear-gradient(180deg, var(--rosa-lavado), var(--superficie) 62%); }
+.metrica--destaque { border-color: var(--acento-borda); background: var(--rosa-lavado); }
 
 /* --------------------------------------------------------------------------
    13. DESCRIÇÃO (par rótulo/valor)
@@ -627,6 +714,9 @@
 .paginacao {
   display: flex; align-items: center; justify-content: space-between; gap: var(--e3);
   flex-wrap: wrap;
+  /* Vão entre a última linha da lista e a régua da paginação: sem ele a régua
+     colava no último cartão e parecia parte dele. */
+  margin-top: var(--e4);
   padding: var(--e3) var(--e5);
   border-top: 1px solid var(--linha);
   font-size: var(--t-13); color: var(--texto-2);
@@ -639,7 +729,7 @@
   font-size: var(--t-13); color: var(--texto-2); font-variant-numeric: tabular-nums;
 }
 .paginacao__botao:hover:not(:disabled) { background: var(--marfim-2); color: var(--texto); }
-.paginacao__botao[aria-current="page"] { background: var(--vinho-2); color: #FBF7F6; font-weight: 500; }
+.paginacao__botao[aria-current="page"] { background: var(--rosa-forte); color: #FFFFFF; font-weight: 500; }
 .paginacao__botao:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* --------------------------------------------------------------------------
@@ -739,7 +829,7 @@
     position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-topo);
     height: calc(var(--barra-inferior) + env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
-    background: rgba(250, 247, 244, 0.94);
+    background: var(--cromo);
     backdrop-filter: blur(12px) saturate(1.4);
     -webkit-backdrop-filter: blur(12px) saturate(1.4);
     border-top: 1px solid var(--linha);

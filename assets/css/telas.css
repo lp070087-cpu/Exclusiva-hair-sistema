@@ -22,16 +22,32 @@
   position: relative;
   display: flex; flex-direction: column; justify-content: space-between;
   padding: var(--e9) var(--e8);
+  /* Grafite quente da casa — o mesmo do trilho.
+     O tema escuro COMPLETO vive aqui dentro, para que os tokens resolvam
+     todos os textos de uma vez: antes esta tela usava as cores de conteúdo
+     claro (--texto-2 = #6E5460) sobre fundo quase preto, o que dava 2,5:1 —
+     o crédito da Unitrix e a lista de recursos ficavam ilegíveis. */
+  --superficie:     #472A34;
+  --superficie-alt: #3F2530;
+  --texto:          #F6EEF0;
+  --texto-2:        #D3B7BE;
+  --texto-3:        #B89AA3;
+  --linha:          rgba(255, 255, 255, 0.12);
+  --linha-2:        rgba(255, 255, 255, 0.18);
+  --linha-forte:    rgba(255, 255, 255, 0.34);
+  --acento-texto:   #E2BBC3;
   background: var(--vinho-3);
   color: #F6EEF0;
   overflow: hidden;
+  color-scheme: dark;
 }
+.entrada-marca__papel, .entrada-marca__item svg { color: var(--rosa-claro); }
 /* O arco da marca, em traço fino, como fundo — vem da própria logo. */
 .entrada-marca::after {
   content: "";
   position: absolute; right: -22%; bottom: -32%;
   width: 78%; aspect-ratio: 1;
-  border: 1px solid rgba(222, 180, 189, 0.22);
+  border: 1px solid var(--rosa-claro-veu);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -39,7 +55,7 @@
   content: "";
   position: absolute; right: -8%; bottom: -14%;
   width: 44%; aspect-ratio: 1;
-  border: 1px solid rgba(222, 180, 189, 0.14);
+  border: 1px solid var(--rosa-claro-veu-fraco);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -47,7 +63,7 @@
 .entrada-marca__logo { width: 3.5rem; height: 3.5rem; object-fit: contain; }
 .entrada-marca__nome {
   font-family: var(--fonte-titulo);
-  font-size: var(--t-26); line-height: 1.1; color: #FFF;
+  font-size: var(--t-26); line-height: 1.1; color: var(--texto);
 }
 .entrada-marca__papel {
   font-size: var(--t-11); letter-spacing: var(--rotulo-esp);
@@ -56,7 +72,7 @@
 .entrada-marca__texto { position: relative; z-index: 1; max-width: 30ch; }
 .entrada-marca__titulo {
   font-family: var(--fonte-titulo);
-  font-size: var(--t-32); line-height: 1.18; color: #FFF;
+  font-size: var(--t-32); line-height: 1.18; color: var(--texto);
 }
 .entrada-marca__lista { margin-top: var(--e6); display: flex; flex-direction: column; gap: var(--e3); }
 .entrada-marca__item {
@@ -94,8 +110,8 @@
   background: var(--marfim-2); color: var(--texto-3); flex: none;
 }
 .credito__selo svg { width: 0.6875rem; height: 0.6875rem; }
-.entrada-marca .credito { color: #A98790; }
-.entrada-marca .credito strong { color: #DCC0C7; }
+.entrada-marca .credito { color: var(--texto-3); }
+.entrada-marca .credito strong { color: var(--acento-texto); }
 .entrada-marca .credito__selo { background: rgba(255, 255, 255, 0.10); color: var(--rosa-claro); }
 .entrada-form__rodape { margin-top: var(--e6); display: flex; justify-content: center; }
 
@@ -137,10 +153,10 @@
 }
 .faixa-datas__item:hover { border-color: var(--linha-forte); }
 .faixa-datas__item[aria-current="date"] {
-  background: var(--vinho-2); border-color: var(--vinho-2); color: #FBF7F6;
+  background: var(--rosa-forte); border-color: var(--rosa-forte); color: #FFFFFF;
 }
 .faixa-datas__item[aria-current="date"] .faixa-datas__dia,
-.faixa-datas__item[aria-current="date"] .faixa-datas__num { color: #FBF7F6; }
+.faixa-datas__item[aria-current="date"] .faixa-datas__num { color: #FFFFFF; }
 .faixa-datas__dia {
   font-size: var(--t-11); letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--texto-3);
@@ -230,7 +246,18 @@
 /* Bloco de compromisso */
 .agenda-bloco {
   position: absolute; left: var(--e2); right: var(--e2);
-  display: flex; flex-direction: column; gap: 0.1rem;
+  /* Grade, não coluna: a hora e o posto dividem a PRIMEIRA linha (o posto
+     não custa altura) e as linhas de texto ficam com a largura inteira. A
+     quarta faixa é `1fr` porque o rodapé continua ancorado no pé do bloco,
+     como estava — num atendimento de 3h o miolo fica vazio e os selos vão
+     para baixo, que é onde ela procura o estado. */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  align-content: start;
+  /* Sem vão VERTICAL: cada linha já tem a própria entrelinha, e num bloco de
+     1h (a menor caixa com texto) cada 2px contam. O vão horizontal continua. */
+  gap: 0 var(--e2);
   padding: var(--e2) var(--e3);
   border-radius: var(--r-2);
   border-left: 3px solid var(--acento);
@@ -244,29 +271,50 @@
 .agenda-bloco:active { transform: translateY(1px); }
 .agenda-bloco__hora {
   font-size: var(--t-11); font-weight: 500; color: var(--texto-2);
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums; line-height: var(--alt-junta);
 }
 .agenda-bloco__nome {
   font-size: var(--t-13); font-weight: 500; color: var(--tinta);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  line-height: var(--alt-junta);
 }
 .agenda-bloco__servico {
   font-size: var(--t-12); color: var(--texto-2);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  line-height: var(--alt-junta);
 }
 .agenda-bloco__rodape { display: flex; align-items: center; gap: var(--e2); flex-wrap: wrap; margin-top: auto; }
 
-/* Bloco curto (30min): o conteúdo precisa caber em uma linha */
-.agenda-bloco[data-curto="sim"] { flex-direction: row; align-items: center; gap: var(--e3); padding: 0 var(--e3); }
-.agenda-bloco[data-curto="sim"] .agenda-bloco__hora { flex: none; }
-.agenda-bloco[data-curto="sim"] .agenda-bloco__nome { flex: none; }
-.agenda-bloco[data-curto="sim"] .agenda-bloco__servico { flex: 1; min-width: 0; }
+/* O lugar de cada parte na grade. A hora fica sozinha na coluna 1 e o posto
+   na coluna 2 da MESMA linha; nome, serviço e rodapé atravessam as duas. */
+.agenda-bloco__hora    { grid-column: 1; grid-row: 1; }
+.agenda-bloco__nome    { grid-column: 1 / -1; grid-row: 2; }
+.agenda-bloco__servico { grid-column: 1 / -1; grid-row: 3; }
+.agenda-bloco__rodape  { grid-column: 1 / -1; grid-row: 4; }
+
+/* Bloco curto (30min): o conteúdo precisa caber em uma linha. A grade
+   continua (a base deixou de ser flex, então `flex-direction` aqui não faria
+   mais nada) — só muda para uma linha de três colunas: hora, nome e serviço.
+   O posto e o rodapé nem existem neste tamanho: 36px de caixa não têm onde
+   pôr mais nada. */
+.agenda-bloco[data-curto="sim"] {
+  grid-template-columns: auto auto minmax(0, 1fr);
+  grid-template-rows: 1fr;
+  align-items: center;
+  gap: 0 var(--e3);
+  padding: 0 var(--e3);
+}
+.agenda-bloco[data-curto="sim"] .agenda-bloco__hora,
+.agenda-bloco[data-curto="sim"] .agenda-bloco__nome,
+.agenda-bloco[data-curto="sim"] .agenda-bloco__servico {
+  grid-column: auto; grid-row: 1; min-width: 0;
+}
 
 /* Cores por estado — o fundo do bloco diz o estado sem precisar do selo */
-.agenda-bloco[data-status="novo"]        { background: var(--novo-fundo);        border-left-color: #B9748A; }
+.agenda-bloco[data-status="novo"]        { background: var(--novo-fundo);        border-left-color: var(--rosa); }
 .agenda-bloco[data-status="pendente"]    { background: var(--pendente-fundo);    border-left-color: #C79A4E; }
 .agenda-bloco[data-status="confirmado"]  { background: var(--confirmado-fundo);  border-left-color: #6E9A5C; }
-.agenda-bloco[data-status="atendimento"] { background: var(--atendimento-fundo); border-left-color: var(--vinho); }
+.agenda-bloco[data-status="atendimento"] { background: var(--atendimento-fundo); border-left-color: var(--rosa); }
 .agenda-bloco[data-status="concluido"]   { background: var(--concluido-fundo);   border-left-color: #8C8878; }
 .agenda-bloco[data-status="cancelado"]   { background: var(--cancelado-fundo);   border-left-color: var(--texto-3); opacity: 0.68; }
 .agenda-bloco[data-status="cancelado"] .agenda-bloco__nome { text-decoration: line-through; color: var(--texto-3); }
@@ -283,7 +331,7 @@
   transition: border-color var(--d2) var(--suave), background var(--d2) var(--suave), color var(--d2) var(--suave);
 }
 .agenda-vago:hover, .agenda-vago:focus-visible {
-  border-color: rgba(177, 117, 129, 0.5);
+  border-color: var(--acento-borda);
   background: var(--rosa-lavado);
   color: var(--acento-texto);
 }
@@ -301,7 +349,7 @@
   background-color: var(--marfim-2);
   background-image: repeating-linear-gradient(
     -45deg, transparent, transparent 5px,
-    rgba(63, 30, 40, 0.055) 5px, rgba(63, 30, 40, 0.055) 10px
+    rgba(59, 48, 51, 0.055) 5px, rgba(59, 48, 51, 0.055) 10px
   );
   color: var(--texto-2);
   overflow: hidden;
@@ -329,7 +377,7 @@
    no pé que diz "continua". Nunca transborda por cima do bloco seguinte. */
 .agenda-bloco[data-ajustado="sim"] {
   border-bottom-left-radius: 0; border-bottom-right-radius: 0;
-  box-shadow: inset 0 -14px 14px -14px rgba(63, 30, 40, 0.45);
+  box-shadow: inset 0 -14px 14px -14px rgba(56, 35, 44, 0.45);
 }
 .agenda-bloco[data-ajustado="sim"]::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
@@ -398,13 +446,13 @@
   transition: box-shadow var(--d2) var(--suave);
 }
 .mini-ag:hover { box-shadow: var(--sombra-2); }
-.mini-ag__hora { font-size: var(--t-11); color: var(--texto-2); font-variant-numeric: tabular-nums; }
-.mini-ag__nome { font-size: var(--t-12); font-weight: 500; color: var(--tinta); }
-.mini-ag__servico { font-size: var(--t-11); color: var(--texto-3); }
-.mini-ag[data-status="novo"]        { background: var(--novo-fundo);        border-left-color: #B9748A; }
+.mini-ag__hora { font-size: var(--t-11); color: var(--texto-2); font-variant-numeric: tabular-nums; line-height: var(--alt-junta); }
+.mini-ag__nome { font-size: var(--t-12); font-weight: 500; color: var(--tinta); line-height: var(--alt-junta); }
+.mini-ag__servico { font-size: var(--t-11); color: var(--texto-3); line-height: var(--alt-junta); }
+.mini-ag[data-status="novo"]        { background: var(--novo-fundo);        border-left-color: var(--rosa); }
 .mini-ag[data-status="pendente"]    { background: var(--pendente-fundo);    border-left-color: #C79A4E; }
 .mini-ag[data-status="confirmado"]  { background: var(--confirmado-fundo);  border-left-color: #6E9A5C; }
-.mini-ag[data-status="atendimento"] { background: var(--atendimento-fundo); border-left-color: var(--vinho); }
+.mini-ag[data-status="atendimento"] { background: var(--atendimento-fundo); border-left-color: var(--rosa); }
 .mini-ag[data-status="concluido"]   { background: var(--concluido-fundo);   border-left-color: #8C8878; }
 .mini-ag[data-status="cancelado"]   { background: var(--cancelado-fundo);   border-left-color: var(--texto-3); opacity: 0.68; }
 .mini-ag[data-status="ausente"]     { background: var(--ausente-fundo);     border-left-color: var(--ausente-texto); }
@@ -443,14 +491,14 @@
   font-size: var(--t-13); font-variant-numeric: tabular-nums; color: var(--texto);
   width: 1.5rem; height: 1.5rem; display: grid; place-content: center; border-radius: 50%;
 }
-.agenda-mes__dia[data-hoje="sim"] .agenda-mes__num { background: var(--vinho-2); color: #FBF7F6; font-weight: 500; }
+.agenda-mes__dia[data-hoje="sim"] .agenda-mes__num { background: var(--rosa-forte); color: #FFFFFF; font-weight: 500; }
 .agenda-mes__contagem { font-size: var(--t-11); color: var(--texto-2); }
 .agenda-mes__barras { display: flex; flex-direction: column; gap: 2px; margin-top: auto; }
 .agenda-mes__barra { height: 3px; border-radius: var(--r-pill); background: var(--linha-2); }
-.agenda-mes__barra[data-status="novo"]        { background: #B9748A; }
+.agenda-mes__barra[data-status="novo"]        { background: var(--rosa); }
 .agenda-mes__barra[data-status="pendente"]    { background: #C79A4E; }
 .agenda-mes__barra[data-status="confirmado"]  { background: #6E9A5C; }
-.agenda-mes__barra[data-status="atendimento"] { background: var(--vinho); }
+.agenda-mes__barra[data-status="atendimento"] { background: var(--rosa); }
 .agenda-mes__barra[data-status="concluido"]   { background: #8C8878; }
 .agenda-mes__barra[data-status="ausente"]     { background: var(--ausente-texto); }
 .agenda-mes__bloqueio {
@@ -528,7 +576,7 @@
   transition: border-color var(--d2) var(--suave), box-shadow var(--d2) var(--suave),
               transform var(--d2) var(--suave);
 }
-.servico-cartao:hover { border-color: rgba(126, 53, 70, 0.38); box-shadow: var(--sombra-2); transform: translateY(-2px); }
+.servico-cartao:hover { border-color: var(--borda-viva); box-shadow: var(--sombra-2); transform: translateY(-2px); }
 .servico-cartao:active { transform: translateY(0); box-shadow: var(--sombra-1); }
 .servico-cartao[data-offline] { background: var(--marfim-2); }
 .servico-cartao[data-offline] .servico-cartao__nome { color: var(--texto-2); }
@@ -584,7 +632,7 @@
   width: 100%; max-width: 2.75rem; margin-top: auto;
   border-radius: var(--r-1) var(--r-1) 0 0;
   background: var(--rosa-lavado);
-  border: 1px solid rgba(177, 117, 129, 0.34);
+  border: 1px solid var(--acento-borda);
   border-bottom: 0;
   min-height: 3px;
   position: relative;
@@ -622,7 +670,7 @@
   .grafico[data-animar] .grafico__barra { animation: none; }
 }
 .grafico__rotulo { font-size: var(--t-11); color: var(--texto-3); white-space: nowrap; }
-.grafico--duplo .grafico__barra { background: linear-gradient(180deg, var(--rosa), var(--rosa-lavado)); }
+.grafico--duplo .grafico__barra { background: var(--rosa-medio); }
 
 .legenda { display: flex; gap: var(--e4); flex-wrap: wrap; font-size: var(--t-12); color: var(--texto-2); }
 .legenda__item { display: inline-flex; align-items: center; gap: var(--e2); }
@@ -707,7 +755,7 @@
   font-size: var(--t-11); font-weight: 500;
 }
 .passo[data-estado="atual"] { color: var(--tinta); font-weight: 500; }
-.passo[data-estado="atual"] .passo__num { background: var(--vinho-2); color: #FBF7F6; }
+.passo[data-estado="atual"] .passo__num { background: var(--rosa-forte); color: #FFFFFF; }
 .passo[data-estado="feito"] { color: var(--texto-2); }
 .passo[data-estado="feito"] .passo__num { background: var(--confirmado-fundo); color: var(--confirmado-texto); }
 .passo__traco { width: 1.25rem; height: 1px; background: var(--linha-2); }
@@ -723,7 +771,7 @@
   transition: border-color var(--d2) var(--suave), background var(--d2) var(--suave), color var(--d2) var(--suave);
 }
 .opcao-horario:hover:not(:disabled) { border-color: var(--acento); background: var(--rosa-lavado); }
-.opcao-horario[aria-pressed="true"] { background: var(--vinho-2); border-color: var(--vinho-2); color: #FBF7F6; }
+.opcao-horario[aria-pressed="true"] { background: var(--rosa-forte); border-color: var(--rosa-forte); color: #FFFFFF; }
 .opcao-horario:disabled { opacity: 0.38; cursor: not-allowed; text-decoration: line-through; }
 
 /* Escolha em cartões (serviço, cliente) */
@@ -793,14 +841,18 @@
   .colunas > .bloco { margin: 0; }
 }
 
-/* --- o atendimento em curso: único elemento com movimento na tela ------- */
+/* --- o atendimento em curso: único elemento com movimento na tela -------
+   Era um gradiente de vinho para quase preto — o "gradiente forte" que o
+   briefing recusa, e o único pedaço preto de uma tela rosa. Agora é rosa
+   profundo sólido: continua sendo o bloco de maior peso da página, mas o
+   peso vem da cor da casa, não de um degradê. */
 .ao-vivo {
   display: flex; flex-direction: column; gap: var(--e3);
   padding: var(--e4) var(--e5);
   margin-bottom: var(--e5);
   border-radius: var(--r-3);
-  background: linear-gradient(135deg, var(--vinho) 0%, var(--vinho-2) 100%);
-  color: var(--marfim);
+  background: var(--rosa-forte);
+  color: #FFFFFF;
   box-shadow: var(--sombra-3);
 }
 .ao-vivo__marca { display: flex; align-items: center; gap: var(--e2); }
@@ -808,13 +860,13 @@
 .pulso {
   width: 0.5rem; height: 0.5rem; border-radius: 50%; flex: none;
   background: var(--rosa-claro);
-  box-shadow: 0 0 0 0 rgba(220, 192, 199, 0.7);
+  box-shadow: 0 0 0 0 rgba(222, 180, 189, 0.7);
   animation: ehn-pulso 2.4s var(--suave) infinite;
 }
 @keyframes ehn-pulso {
-  0%   { box-shadow: 0 0 0 0 rgba(220, 192, 199, 0.65); }
-  70%  { box-shadow: 0 0 0 0.6rem rgba(220, 192, 199, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(220, 192, 199, 0); }
+  0%   { box-shadow: 0 0 0 0 rgba(222, 180, 189, 0.65); }
+  70%  { box-shadow: 0 0 0 0.6rem rgba(222, 180, 189, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(222, 180, 189, 0); }
 }
 @media (prefers-reduced-motion: reduce) { .pulso { animation: none; } }
 .ao-vivo__item {
@@ -844,14 +896,18 @@
 }
 .destaque:hover {
   box-shadow: var(--sombra-2); transform: translateY(-2px);
-  border-top-color: rgba(126, 53, 70, 0.38);
-  border-right-color: rgba(126, 53, 70, 0.38);
-  border-bottom-color: rgba(126, 53, 70, 0.38);
+  border-top-color: var(--borda-viva);
+  border-right-color: var(--borda-viva);
+  border-bottom-color: var(--borda-viva);
 }
 .destaque:active { transform: translateY(0); box-shadow: var(--sombra-1); }
 .destaque__topo { display: flex; align-items: baseline; gap: var(--e3); }
 .destaque__topo .selo { margin-left: auto; }
-.destaque__hora { font-size: var(--t-32); line-height: 1; color: var(--tinta); font-variant-numeric: tabular-nums; }
+.destaque__hora {
+  font-family: var(--fonte-titulo);
+  font-size: var(--t-32); line-height: 1; color: var(--tinta);
+  font-variant-numeric: tabular-nums;
+}
 .destaque__ate { font-size: var(--t-13); color: var(--texto-3); }
 .destaque__quem { display: flex; align-items: center; gap: var(--e3); min-width: 0; }
 .destaque__nome { display: block; font-size: var(--t-16); color: var(--tinta); }
@@ -874,10 +930,14 @@
   transition: border-color var(--d2) var(--suave), transform var(--d2) var(--suave),
               box-shadow var(--d2) var(--suave);
 }
-.dia-resumo:hover { border-color: rgba(126, 53, 70, 0.38); transform: translateY(-2px); box-shadow: var(--sombra-2); }
+.dia-resumo:hover { border-color: var(--borda-viva); transform: translateY(-2px); box-shadow: var(--sombra-2); }
 .dia-resumo[data-fechado="sim"] { background: var(--marfim-2); }
 .dia-resumo__semana { font-size: var(--t-11); color: var(--texto-3); text-transform: uppercase; letter-spacing: var(--rotulo-esp); }
-.dia-resumo__num { font-size: var(--t-18); color: var(--tinta); font-variant-numeric: tabular-nums; }
+.dia-resumo__num {
+  font-family: var(--fonte-titulo);
+  font-size: var(--t-18); line-height: 1.2; color: var(--tinta);
+  font-variant-numeric: tabular-nums;
+}
 .dia-resumo__mes { font-size: var(--t-11); color: var(--texto-3); text-transform: uppercase; }
 .dia-resumo__contagem {
   font-size: var(--t-11); color: var(--texto-2);
@@ -901,7 +961,11 @@
 }
 .grade-status__item:hover { border-color: var(--linha-forte); background: var(--marfim); }
 .grade-status__item[data-vazio="sim"] { opacity: 0.55; }
-.grade-status__num { font-size: var(--t-18); color: var(--tinta); font-variant-numeric: tabular-nums; }
+.grade-status__num {
+  font-family: var(--fonte-titulo);
+  font-size: var(--t-18); line-height: 1.2; color: var(--tinta);
+  font-variant-numeric: tabular-nums;
+}
 
 /* --- atalhos do dia ----------------------------------------------------- */
 .atalhos { display: grid; gap: var(--e2); grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); }
@@ -931,7 +995,9 @@
 }
 .barra-forma__preenchimento--ocupado   { background: var(--rosa-medio); }
 .barra-forma__preenchimento--bloqueio  { background: var(--linha-forte); }
-.barra-forma__preenchimento--livre     { background: var(--folhagem); opacity: 0.55; }
+/* O verde do salão entrou um degrau mais claro no token; com isso a mesma
+   barra continua discreta sem cair para 2,8:1 de contraste. */
+.barra-forma__preenchimento--livre     { background: var(--folhagem); opacity: 0.72; }
 .barra-forma--clicavel {
   width: 100%; cursor: pointer; font: inherit; text-align: left;
   border: 0; border-radius: var(--r-1); background: none;
@@ -962,9 +1028,13 @@
 /* Lista agrupada por dia: um cabeçalho fino separa os blocos sem repetir a
    data em cada linha. */
 .pilha-dias { display: flex; flex-direction: column; gap: var(--e2); }
+/* O vão acima do dia (12px) era só 4px maior que o vão entre dois cartões do
+   MESMO dia (8px, o `gap` da pilha): a quebra de dia quase não se distinguia
+   de uma quebra comum de lista, e a data parecia pertencer ao bloco de cima.
+   Agora são 16px — o dobro — e a quebra de dia manda no que ela separa. */
 .dia-cabeca {
   display: flex; align-items: baseline; gap: var(--e3);
-  margin-top: var(--e3); padding-bottom: var(--e1);
+  margin-top: var(--e4); padding-bottom: var(--e1);
   border-bottom: 1px solid var(--linha);
 }
 .pilha-dias > .dia-cabeca:first-child { margin-top: 0; }
@@ -1125,22 +1195,22 @@
 /* Longe do horário: informativo. Só contorno, sem cor de alarme. */
 .temporal--longe    { border-color: var(--linha-2); color: var(--texto-2); }
 /* Faltando 10 a 6 minutos: ganha contorno na cor da casa. */
-.temporal--proximo  { border-color: rgba(177, 117, 129, 0.42); color: var(--acento-texto); background: var(--rosa-lavado); }
+.temporal--proximo  { border-color: var(--acento-borda); color: var(--acento-texto); background: var(--rosa-lavado); }
 /* Faltando 5 a 1: um degrau acima — fundo lavado e peso. É o momento de
    olhar para a porta. */
 .temporal--iminente {
   border-color: var(--acento); color: var(--acento-texto);
   background: var(--rosa-lavado); font-weight: 600;
-  box-shadow: 0 0 0 3px rgba(177, 117, 129, 0.10);
+  box-shadow: 0 0 0 3px var(--acento-veu-2);
 }
 /* No horário: a cliente é agora. */
 .temporal--no-horario {
   border-color: var(--vinho); color: var(--vinho);
-  background: #F5E7EB; font-weight: 600; letter-spacing: 0.06em;
+  background: var(--atendimento-fundo); font-weight: 600; letter-spacing: 0.06em;
 }
 /* Passou do horário — vermelho elegante, sem fundo cheio. O fundo cheio
    fica reservado para o atraso crítico, senão os dois pesam igual. */
-.temporal--atraso { color: var(--atraso); border-color: rgba(138, 74, 56, 0.4); }
+.temporal--atraso { color: var(--atraso); border-color: var(--ausente-borda); }
 /* Passou mais de 10 minutos: é o único elemento do painel que grita. */
 .temporal--atraso-critico {
   color: #FBF7F6; background: var(--atraso-critico);
@@ -1178,7 +1248,10 @@
   padding-top: var(--e4); border-top: 1px solid var(--linha);
 }
 .mini-numero { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
-.mini-numero__valor { font-size: var(--t-18); color: var(--tinta); line-height: 1.2; }
+.mini-numero__valor {
+  font-family: var(--fonte-titulo);
+  font-size: var(--t-18); line-height: 1.2; color: var(--tinta);
+}
 .mini-numero__rotulo {
   font-size: var(--t-11); color: var(--texto-3);
   text-transform: uppercase; letter-spacing: var(--rotulo-esp);
@@ -1283,7 +1356,7 @@
   transition: border-color var(--d2) var(--suave), box-shadow var(--d2) var(--suave),
               transform var(--d2) var(--suave);
 }
-.eq-cartao:hover { border-color: rgba(126, 53, 70, 0.38); box-shadow: var(--sombra-2); transform: translateY(-2px); }
+.eq-cartao:hover { border-color: var(--borda-viva); box-shadow: var(--sombra-2); transform: translateY(-2px); }
 .eq-cartao:active { transform: translateY(0); box-shadow: var(--sombra-1); }
 .eq-cartao[data-inativo="sim"] { opacity: 0.72; }
 .eq-cartao__topo { display: flex; align-items: center; gap: var(--e3); }
@@ -1371,10 +1444,12 @@
 /* A sigla dentro do bloco (§8): só aparece na visão "Todas", para que a
    timeline inteira continue legível sem virar uma colcha de retalhos. */
 .agenda-bloco__posto {
-  align-self: flex-start; flex: none;
+  grid-column: 2; grid-row: 1; justify-self: end; align-self: center;
+  flex: none;
   padding: 0 0.35rem; border-radius: var(--r-pill);
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--cromo);
   font-size: var(--t-11); font-weight: 500; letter-spacing: 0.02em; color: var(--texto-2);
+  line-height: var(--alt-junta);
 }
 
 /* --------------------------------------------------------------------------

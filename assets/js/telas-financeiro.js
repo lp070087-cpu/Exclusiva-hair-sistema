@@ -227,7 +227,7 @@
           return v == null || v === 0 ? (fallback || N.moeda(0)) : N.moeda(v);
         }
 
-        corpo.appendChild(h('div.grade.grade--metricas', null,
+        corpo.appendChild(h('div.grade.grade--metricas.grade--metricas--5', null,
           U.metrica({
             rotulo: 'Faturamento hoje', valor: dinheiro(rHoje.recebido),
             icone: 'dinheiro', demo: true,

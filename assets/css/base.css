@@ -12,47 +12,98 @@
    1. TOKENS
    -------------------------------------------------------------------------- */
 :root {
-  /* -- Cor: amostrada da logo, do ambiente e das fotos da marca ---------- */
-  --marfim:      #FAF7F4;   /* tela de fundo do painel                      */
-  --marfim-2:    #F3EDE8;   /* faixa alternada / cabeçalho de tabela        */
-  --areia:       #E8DCD2;   /* poço neutro quente                           */
+  /* -- Cor: amostrada da logo, do ambiente e das fotos da marca ----------
+     A hierarquia é uma ESCADA: do branco quente ao rosa profundo. Quem é
+     "principal" ou "selecionado" no painel sai sempre de --rosa-forte; o
+     rosa da logo (--rosa) ficou como o tom claro da família, para barras,
+     ícones e pontos. O contorno colorido da logo NÃO virou paleta: ele
+     aparece só em microdetalhes, e nenhum tom fora do rosa é protagonista. */
+
+  /* 1. FUNDO — off-white levemente rosado */
+  --marfim:      #FAF6F5;   /* tela de fundo do painel                      */
+  --marfim-2:    #F4EDEC;   /* faixa alternada / cabeçalho de tabela        */
   --branco:      #FFFFFF;   /* superfície de cartão                         */
+
+  /* 2. PRIMÁRIA — rosa queimado/malva, o tom dos materiais do salão */
   --rosa:        #B17581;   /* cor oficial da logo (amostrada)              */
   --rosa-medio:  #C997A1;
   --rosa-claro:  #DEB4BD;
   --rosa-lavado: #F7EEF1;   /* superfície tingida p/ estado ativo           */
-  --vinho:       #5C2B38;
-  --vinho-2:     #3F1E28;
-  --vinho-3:     #2E141B;   /* trilho lateral                               */
+
+  /* 3. PRIMÁRIA FORTE — rosa profundo. Ação principal, seleção, destaque.
+     Carrega texto branco com 6,4:1; era o vinho quase preto que fazia isso. */
+  --rosa-forte:   #8E4A5C;
+  --rosa-forte-2: #7C3F4F;  /* hover da ação principal                      */
+
+  --vinho:       #6B3444;   /* rosa profundo da casa                        */
+  --vinho-2:     #4A2531;   /* degrau escuro: contraste e texto sobre claro */
+  --vinho-3:     #38232C;   /* grafite quente do trilho — NÃO é preto       */
+
+  /* 4. APOIO — em pequenas doses, nunca protagonistas */
   --dourado:     #A98247;   /* molduras dos espelhos                        */
-  --folhagem:    #33502B;   /* parede verde do salão                        */
+  --folhagem:    #4F6B45;   /* parede verde do salão, em tom de sálvia      */
 
-  /* -- Texto: cada tom com contraste conferido sobre o marfim ------------ */
-  --tinta:    #2A151C;      /* títulos — 15,4:1                            */
-  --texto:    #3F1E28;      /* corpo   — 13,2:1                            */
-  --texto-2:  #6E5460;      /* apoio   —  6,3:1                            */
-  --texto-3:  #77626C;      /* rótulos — 4,6:1 no pior fundo do painel      */
+  /* -- Texto: grafite muito escuro + cinza quente/malva acinzentado ------
+     Cada tom com contraste conferido sobre o PIOR fundo em que aparece.
+     O texto saiu do vinho: sobre fundo rosa, texto arroxeado lia como
+     "tudo é rosa" e cansava numa tela aberta o dia inteiro. */
+  --tinta:    #2B2327;      /* títulos — 13,2:1 sobre o marfim             */
+  --texto:    #3B3033;      /* corpo   — 11,0:1                            */
+  --texto-2:  #635760;      /* apoio   —  5,9:1 no pior fundo              */
+  --texto-3:  #75666D;      /* rótulos —  4,7:1 no pior fundo do painel    */
+  --texto-4:  #94848B;      /* placeholder: mais claro, ainda legível      */
+
+  /* Preenchimento de hover sobre superfície clara. Um tom só, no lugar de
+     seis rgba quase iguais espalhados pelos três arquivos. */
+  --veu-claro:   rgba(59, 48, 51, 0.06);
+  --veu-claro-2: rgba(59, 48, 51, 0.09);
+
   /* Rosa da marca só passa AA em texto grande (3,66:1). Para texto pequeno
-     existe um tom escurecido que preserva o matiz — mesma solução do site. */
-  --acento:       var(--rosa);
-  --acento-texto: #82545D;  /* 6,0:1 sobre branco                          */
+     existe um tom escurecido que preserva o matiz — mesma solução do site.
+     Os três tokens abaixo são o mesmo rosa em três papéis diferentes:
+     `--acento` pinta forma, `--acento-borda` contorna, `--acento-veu` faz
+     halo de foco. Antes cada um tinha um rgba próprio e a borda do rosa
+     aparecia em SEIS alfas distintas no mesmo painel. */
+  --acento:        var(--rosa);
+  --acento-texto:  #82545D;  /* 6,0:1 sobre branco                          */
+  --acento-borda:  rgba(177, 117, 129, 0.40);
+  --acento-veu:    rgba(177, 117, 129, 0.16);
+  --acento-veu-2:  rgba(177, 117, 129, 0.10);
 
-  /* -- Superfícies e traços ---------------------------------------------- */
+  /* -- Superfícies e traços ----------------------------------------------
+     Bordas: cinza quente com um fio de rosa. Sobre fundo off-white rosado,
+     a borda arroxeada de antes puxava a tela toda para o roxo — e borda é
+     o traço que mais aparece numa tela cheia de cartões. */
   --superficie:      var(--branco);
   --superficie-alt:  #FCFAF8;
-  --linha:           rgba(63, 30, 40, 0.10);
-  --linha-2:         rgba(63, 30, 40, 0.16);
-  --linha-forte:     rgba(63, 30, 40, 0.30);
-  --veu:             rgba(42, 21, 28, 0.42);
+  --linha:           rgba(59, 48, 51, 0.09);
+  --linha-2:         rgba(59, 48, 51, 0.15);
+  --linha-forte:     rgba(107, 52, 68, 0.30);
+  --veu:             rgba(56, 35, 44, 0.46);
+  /* Hover de cartão: um degrau acima da --linha-2, ainda dentro do rosa.
+     Era o literal repetido 7 vezes nos três arquivos. */
+  --borda-viva:      rgba(107, 52, 68, 0.34);
+  /* Véu das faixas grudadas (topo e barra inferior). Antes era o marfim
+     escrito à mão com dois alfas diferentes; agora acompanha o token. */
+  --cromo:           rgba(250, 246, 245, 0.90);
+  --rosa-claro-veu:       rgba(222, 180, 189, 0.18);
+  --rosa-claro-veu-fraco: rgba(222, 180, 189, 0.11);
 
-  /* -- Estados: matriz tirada da própria paleta da marca ------------------ */
-  --novo-fundo:       #F7EEF1;  --novo-texto:       #7A4A57;
-  --pendente-fundo:   #F6EFE3;  --pendente-texto:   #7A5A26;
-  --confirmado-fundo: #EAF0E6;  --confirmado-texto: #3C5A32;
-  --atendimento-fundo:#F2E6EA;  --atendimento-texto:#5C2B38;
-  --concluido-fundo:  #EFEFEA;  --concluido-texto:  #54524A;
-  --cancelado-fundo:  #F1EFEF;  --cancelado-texto:  #7C6A72;
-  --ausente-fundo:    #F5E9E6;  --ausente-texto:    #8A4A38;
+  /* -- Estados: matriz tirada da própria paleta da marca ------------------
+     Cor semântica aqui aparece em PEQUENAS DOSES — é a exceção que precisa
+     existir para o olho achar "cancelado" num relance, não o tom da tela.
+     Cada par texto/fundo passa 4,5:1 (conferido par por par). Três pares
+     estavam abaixo disso e foram corrigidos: cancelado (4,4), estornado
+     (4,4) e pagamento neutro (4,4). */
+  --novo-fundo:       #F7EEF1;  --novo-texto:       #7A4A57;  /* 6,3:1 */
+  --pendente-fundo:   #F6EFE3;  --pendente-texto:   #7A5A26;  /* 5,5:1 */
+  --confirmado-fundo: #EAF0E6;  --confirmado-texto: #3C5A32;  /* 6,7:1 */
+  --atendimento-fundo:#F2E6EA;  --atendimento-texto:#6B3444;  /* 9,3:1 */
+  --concluido-fundo:  #EFECEA;  --concluido-texto:  #54524A;  /* 6,6:1 */
+  --cancelado-fundo:  #F1EDEC;  --cancelado-texto:  #6E6067;  /* 5,1:1 */
+  --ausente-fundo:    #F5E9E6;  --ausente-texto:    #8A4A38;  /* 5,7:1 */
+  /* Contorno do vermelho de ausência: mesma cor do texto, em traço. */
+  --ausente-borda:    rgba(138, 74, 56, 0.38);
 
   /* Faixa de aviso de dado demonstrativo */
   --demo-fundo:   #F6EFE3;
@@ -64,9 +115,9 @@
      situação cair num cinza genérico. */
   --pag-pago-fundo:      #EAF0E6;  --pag-pago-texto:      #3C5A32;
   --pag-pendente-fundo:  #F6EFE3;  --pag-pendente-texto:  #7A5A26;
-  --pag-parcial-fundo:   #F2E6EA;  --pag-parcial-texto:   #5C2B38;
-  --pag-estornado-fundo: #F1EFEF;  --pag-estornado-texto: #7C6A72;
-  --pag-neutro-fundo:    #F3EDE8;  --pag-neutro-texto:    #7C6A72;
+  --pag-parcial-fundo:   #F2E6EA;  --pag-parcial-texto:   #6B3444;
+  --pag-estornado-fundo: #F1EDEC;  --pag-estornado-texto: #6E6067;
+  --pag-neutro-fundo:    #F4EDEC;  --pag-neutro-texto:    #6E6067;
 
   /* Atraso e iminência: os DOIS únicos pontos em que o painel usa vermelho.
      Tirantes da matriz da marca — o vermelho do estado "ausente", um grau
@@ -116,10 +167,10 @@
   --controle-alt: 2.375rem;
 
   /* -- Sombra: o mínimo para separar planos ------------------------------ */
-  --sombra-1: 0 1px 2px rgba(42, 21, 28, 0.06);
-  --sombra-2: 0 2px 6px -1px rgba(42, 21, 28, 0.08), 0 1px 2px rgba(42, 21, 28, 0.04);
-  --sombra-3: 0 16px 40px -18px rgba(42, 21, 28, 0.30);
-  --sombra-4: 0 28px 70px -24px rgba(42, 21, 28, 0.44);
+  --sombra-1: 0 1px 2px rgba(56, 35, 44, 0.06);
+  --sombra-2: 0 2px 6px -1px rgba(56, 35, 44, 0.08), 0 1px 2px rgba(56, 35, 44, 0.04);
+  --sombra-3: 0 16px 40px -18px rgba(56, 35, 44, 0.28);
+  --sombra-4: 0 28px 70px -24px rgba(56, 35, 44, 0.42);
 
   /* -- Movimento: curto, funcional ---------------------------------------
      A faixa útil aqui é 160–280ms. Abaixo disso a transição não chega a ser
@@ -153,16 +204,16 @@
 /* Tema escuro do painel: usado no TRILHO e nas telas de entrada.
    Não é um modo alternativo do conteúdo — é identidade. */
 .tema-trilho {
-  --superficie:     #3A1D26;
-  --superficie-alt: #331821;
-  --texto:          #F6EEF0;
-  --texto-2:        #CDAEB6;
-  --texto-3:        #AC8993;
-  --linha:          rgba(255, 255, 255, 0.10);
-  --linha-2:        rgba(255, 255, 255, 0.16);
+  --superficie:     #472A34;
+  --superficie-alt: #3F2530;
+  --texto:          #F6EEF0;   /* 12,1:1 sobre a superfície do trilho */
+  --texto-2:        #D3B7BE;   /*  7,4:1                              */
+  --texto-3:        #B89AA3;   /*  5,4:1                              */
+  --linha:          rgba(255, 255, 255, 0.12);
+  --linha-2:        rgba(255, 255, 255, 0.18);
   --linha-forte:    rgba(255, 255, 255, 0.34);
   --acento:         var(--rosa-claro);
-  --acento-texto:   #DEB4BD;
+  --acento-texto:   #E2BBC3;   /*  8,0:1 — o rótulo "Painel de gestão" */
   color-scheme: dark;
 }
 
@@ -305,9 +356,12 @@ h1, h2, h3, h4 { font-weight: 400; color: var(--tinta); line-height: var(--alt-j
 .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.48; cursor: not-allowed; }
 .btn svg { width: 1rem; height: 1rem; }
 
-/* Principal: vinho sólido. É a cor da casa em ação. */
-.btn--principal { background: var(--vinho-2); color: #FBF7F6; box-shadow: var(--sombra-1); }
-.btn--principal:hover:not(:disabled) { background: var(--vinho-3); }
+/* Principal: ROSA FORTE. É a ação que a dona precisa achar sem procurar —
+   concluir, salvar, criar, confirmar. Antes era o vinho quase preto: o
+   botão mais importante do painel era o único elemento sem cor da casa.
+   Texto branco sobre #8E4A5C = 6,4:1. */
+.btn--principal { background: var(--rosa-forte); color: #FFFFFF; box-shadow: var(--sombra-1); }
+.btn--principal:hover:not(:disabled) { background: var(--rosa-forte-2); }
 
 /* Secundário: branco com traço. O botão mais usado do painel. */
 .btn--secundario { background: var(--branco); color: var(--texto); border-color: var(--linha-2); box-shadow: var(--sombra-1); }
@@ -315,14 +369,19 @@ h1, h2, h3, h4 { font-weight: 400; color: var(--tinta); line-height: var(--alt-j
 
 /* Fantasma: para ações dentro de linhas e barras. */
 .btn--fantasma { color: var(--texto-2); }
-.btn--fantasma:hover:not(:disabled) { background: rgba(63, 30, 40, 0.055); color: var(--texto); }
+.btn--fantasma:hover:not(:disabled) { background: var(--veu-claro); color: var(--texto); }
 
-/* Acento: rosa da marca. Rareado de propósito — só na ação que vende. */
-.btn--acento { background: var(--rosa); color: #fff; box-shadow: var(--sombra-1); }
-.btn--acento:hover:not(:disabled) { background: #A06672; }
+/* Acento: rosa claro da marca. Rareado de propósito. É o único botão de
+   FUNDO CLARO com texto escuro — por isso não compete com o principal:
+   quem é mais importante continua sendo quem tem o fundo mais forte. */
+.btn--acento { background: var(--rosa-claro); color: var(--vinho-2); box-shadow: var(--sombra-1); }
+.btn--acento:hover:not(:disabled) { background: var(--rosa-medio); }
 
-.btn--perigo { background: var(--branco); color: var(--ausente-texto); border-color: rgba(138, 74, 56, 0.34); }
-.btn--perigo:hover:not(:disabled) { background: #F5E9E6; border-color: rgba(138, 74, 56, 0.5); }
+/* Perigo: contorno, fundo branco e peso de texto normal. É desenhado para
+   PARECER secundário — é a única ação do painel que apaga dados. Cancelar
+   e "marcar ausente" vivem aqui, e nunca podem competir com a ação principal. */
+.btn--perigo { background: var(--branco); color: var(--ausente-texto); border-color: var(--ausente-borda); font-weight: 400; }
+.btn--perigo:hover:not(:disabled) { background: var(--ausente-fundo); border-color: rgba(138, 74, 56, 0.52); }
 
 .btn--pequeno { height: 1.9375rem; padding: 0 var(--e3); font-size: var(--t-13); }
 .btn--pequeno svg { width: 0.875rem; height: 0.875rem; }
@@ -338,9 +397,9 @@ h1, h2, h3, h4 { font-weight: 400; color: var(--tinta); line-height: var(--alt-j
   color: var(--texto-2); position: relative;
   transition: background var(--d2) var(--suave), color var(--d2) var(--suave);
 }
-.btn-icone:hover { background: rgba(63, 30, 40, 0.06); color: var(--texto); }
+.btn-icone:hover { background: var(--veu-claro); color: var(--texto); }
 .btn-icone svg { width: 1.125rem; height: 1.125rem; }
-.btn-icone[aria-expanded="true"] { background: rgba(63, 30, 40, 0.08); color: var(--texto); }
+.btn-icone[aria-expanded="true"] { background: var(--veu-claro-2); color: var(--texto); }
 
 /* Contador de pendências sobre o ícone */
 .btn-icone__ponto {
@@ -382,12 +441,12 @@ h1, h2, h3, h4 { font-weight: 400; color: var(--tinta); line-height: var(--alt-j
   transition: border-color var(--d2) var(--suave), box-shadow var(--d2) var(--suave), background var(--d2) var(--suave);
   appearance: none;
 }
-.entrada::placeholder, .area::placeholder { color: #A08E95; }
+.entrada::placeholder, .area::placeholder { color: var(--texto-4); }
 .entrada:hover, .selecao:hover, .area:hover { border-color: var(--linha-forte); }
 .entrada:focus, .selecao:focus, .area:focus {
   outline: none;
   border-color: var(--acento);
-  box-shadow: 0 0 0 3px rgba(177, 117, 129, 0.16);
+  box-shadow: 0 0 0 3px var(--acento-veu);
 }
 .entrada:disabled, .selecao:disabled, .area:disabled { background: var(--marfim-2); color: var(--texto-3); cursor: not-allowed; }
 
@@ -416,7 +475,7 @@ h1, h2, h3, h4 { font-weight: 400; color: var(--tinta); line-height: var(--alt-j
   display: none; align-items: center; justify-content: center;
   color: var(--texto-3);
 }
-.busca__limpar:hover { background: rgba(63, 30, 40, 0.07); color: var(--texto); }
+.busca__limpar:hover { background: var(--veu-claro-2); color: var(--texto); }
 .busca__limpar svg { position: static; width: 0.8125rem; height: 0.8125rem; }
 .busca[data-preenchido] .busca__limpar { display: flex; }
 
@@ -433,7 +492,7 @@ h1, h2, h3, h4 { font-weight: 400; color: var(--tinta); line-height: var(--alt-j
 .interruptor__trilho {
   position: relative; flex: none;
   width: 2.25rem; height: 1.25rem; border-radius: var(--r-pill);
-  background: #D6C8CB;
+  background: var(--linha-forte);
   transition: background var(--d2) var(--suave);
 }
 .interruptor__trilho::after {
@@ -531,7 +590,7 @@ h1, h2, h3, h4 { font-weight: 400; color: var(--tinta); line-height: var(--alt-j
   text-transform: uppercase; color: var(--texto-2);
 }
 .origem svg { width: 0.6875rem; height: 0.6875rem; }
-.origem--site { border-color: rgba(177, 117, 129, 0.4); color: var(--acento-texto); background: var(--rosa-lavado); }
+.origem--site { border-color: var(--acento-borda); color: var(--acento-texto); background: var(--rosa-lavado); }
 .origem--manual { border-color: var(--linha-2); color: var(--texto-3); }
 
 /* Contador numérico pequeno (ex.: nº de novas notificações) */
@@ -539,7 +598,9 @@ h1, h2, h3, h4 { font-weight: 400; color: var(--tinta); line-height: var(--alt-j
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 1.125rem; height: 1.125rem; padding: 0 0.3125rem;
   border-radius: var(--r-pill);
-  background: var(--rosa); color: #fff;
+  /* Rosa forte, e não o rosa da logo: com texto branco em 11px, o rosa
+     claro media 3,7:1 — abaixo do mínimo. Aqui mede 6,4:1. */
+  background: var(--rosa-forte); color: #FFFFFF;
   font-size: var(--t-11); font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
@@ -560,12 +621,14 @@ h1, h2, h3, h4 { font-weight: 400; color: var(--tinta); line-height: var(--alt-j
 .avatar--g { width: 2.75rem; height: 2.75rem; font-size: var(--t-14); }
 .avatar--p { width: 1.625rem; height: 1.625rem; font-size: var(--t-11); }
 .avatar--x { width: 3.5rem; height: 3.5rem; font-size: var(--t-18); }
-/* Variações de matiz — todas dentro da família da marca */
-.avatar[data-matiz="1"] { background: #E8DCD2; color: #7A5A3C; }
-.avatar[data-matiz="2"] { background: #EAF0E6; color: #3C5A32; }
-.avatar[data-matiz="3"] { background: #F6EFE3; color: #7A5A26; }
-.avatar[data-matiz="4"] { background: #F2E6EA; color: #5C2B38; }
-.avatar[data-matiz="5"] { background: #EDE7F0; color: #5A4670; }
+/* Variações de matiz — todas dentro da família da marca.
+   O matiz 5 era #EDE7F0/#5A4670: um roxo frio, o único tom do painel
+   fora do rosa. Passou a malva. Todos os cinco passam 5:1. */
+.avatar[data-matiz="1"] { background: #F1E7E0; color: #7A5346; }  /* areia  */
+.avatar[data-matiz="2"] { background: #F4E9E4; color: #8A4B53; }  /* rosa   */
+.avatar[data-matiz="3"] { background: #F6EFE3; color: #7A5A26; }  /* dourado*/
+.avatar[data-matiz="4"] { background: #F2E6EA; color: #6B3444; }  /* vinho  */
+.avatar[data-matiz="5"] { background: #EFE3EA; color: #6E4257; }  /* malva  */
 
 /* --------------------------------------------------------------------------
    9. PRIMITIVOS — estado vazio e esqueleto

@@ -183,9 +183,12 @@
     if (!p) return null;
     var st = N.statusPagamento(p.status);
     var v = N.valorLiquido(p);
-    var rotulo = v == null ? st.nome : st.nome + ' · ' + N.moeda(v);
+    /* O selo é do ESTADO, não do valor: no cartão em linha o dinheiro
+       competia com a situação. O valor inteiro continua no title. */
+    var rotulo = st.nome;
+    var completo = v == null ? st.nome : st.nome + ' · ' + N.moeda(v);
     return h('span.selo-pag.selo-pag--' + p.status, {
-      title: 'Pagamento: ' + rotulo,
+      title: 'Pagamento: ' + completo,
       texto: rotulo
     });
   }
